@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AK Agency — Retailers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"DM Sans",sans-serif;background:#0D0D0D;color:#F5F5F5;min-height:100vh;display:flex;}
+    ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:#1A1A1A;} ::-webkit-scrollbar-thumb{background:#C8102E;border-radius:4px;}
+
+    #sidebar{width:240px;min-height:100vh;background:#1A1A1A;border-right:1px solid #2A2A2A;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid #2A2A2A;}
+    .nav-section-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#4A4A4A;padding:20px 20px 8px;font-weight:600;}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;margin:2px 10px;border-radius:8px;color:#6B6B6B;font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+    .nav-item:hover{background:rgba(200,16,46,0.08);color:#F5F5F5;}
+    .nav-item.active{background:rgba(200,16,46,0.15);color:#fff;}
+    .nav-item.active svg{color:#C8102E;}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0;}
+    .sidebar-bottom{margin-top:auto;padding:16px;border-top:1px solid #2A2A2A;}
+
+    #main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    #topbar{height:64px;background:#1A1A1A;border-bottom:1px solid #2A2A2A;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C8102E,#9B0B22);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;}
+    #content{padding:28px;flex:1;}
+
+    .section-card{background:#202020;border:1px solid #2A2A2A;border-radius:14px;padding:22px;}
+    .ak-table{width:100%;border-collapse:collapse;}
+    .ak-table th{text-align:left;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A4A4A;padding:10px 14px;border-bottom:1px solid #2A2A2A;}
+    .ak-table td{padding:13px 14px;font-size:0.85rem;color:#ccc;border-bottom:1px solid #222;}
+    .ak-table tr:last-child td{border-bottom:none;}
+    .ak-table tr:hover td{background:rgba(255,255,255,0.02);color:#fff;}
+
+    .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:600;}
+    .pill-green{background:rgba(16,185,129,0.15);color:#10B981;}
+    .pill-red{background:rgba(200,16,46,0.15);color:#FF4D6D;}
+    .pill-amber{background:rgba(245,158,11,0.15);color:#F59E0B;}
+    .pill-blue{background:rgba(59,130,246,0.15);color:#60A5FA;}
+
+    .btn-primary{background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform 0.15s,box-shadow 0.15s;font-family:"DM Sans",sans-serif;}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,16,46,0.35);}
+    .btn-ghost{background:rgba(255,255,255,0.05);color:#ccc;border:1px solid #2A2A2A;border-radius:8px;padding:10px 16px;font-size:0.85rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .btn-ghost:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    .btn-icon{background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;color:#6B6B6B;}
+    .btn-icon:hover{background:rgba(255,255,255,0.06);color:#fff;}
+    .btn-icon.danger:hover{background:rgba(200,16,46,0.1);color:#FF4D6D;}
+
+    .filter-input{background:rgba(255,255,255,0.04);border:1px solid #2A2A2A;border-radius:8px;padding:9px 14px;color:#F5F5F5;font-size:0.85rem;outline:none;font-family:"DM Sans",sans-serif;transition:border-color 0.2s;}
+    .filter-input:focus{border-color:#C8102E;}
+    .filter-input::placeholder{color:#4A4A4A;}
+    select.filter-input option{background:#1A1A1A;}
+
+    .form-label{display:block;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;}
+    .form-input{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid #2A2A2A;border-radius:8px;padding:10px 14px;color:#F5F5F5;font-size:0.875rem;outline:none;font-family:"DM Sans",sans-serif;transition:border-color 0.2s,box-shadow 0.2s;}
+    .form-input:focus{border-color:#C8102E;box-shadow:0 0 0 3px rgba(200,16,46,0.12);}
+    .form-input::placeholder{color:#3A3A3A;}
+    select.form-input option{background:#1A1A1A;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+    /* Modal */
+    #modalOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:16px;}
+    #modalOverlay.open{display:flex;}
+    .modal{background:#1A1A1A;border:1px solid #2A2A2A;border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:modalIn 0.25s cubic-bezier(0.22,1,0.36,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
+
+    /* Detail panel */
+    #detailPanel{display:none;position:fixed;right:0;top:0;bottom:0;width:400px;background:#1A1A1A;border-left:1px solid #2A2A2A;z-index:150;overflow-y:auto;animation:slideIn 0.3s cubic-bezier(0.22,1,0.36,1);}
+    @keyframes slideIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+    #detailPanel.open{display:block;}
+    #detailOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:149;}
+    #detailOverlay.open{display:block;}
+
+    /* Delete modal */
+    #deleteModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;align-items:center;justify-content:center;}
+    #deleteModal.open{display:flex;}
+
+    /* Payment modal */
+    #paymentModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;align-items:center;justify-content:center;padding:16px;}
+    #paymentModal.open{display:flex;}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1A1A;border:1px solid #2A2A2A;color:#F5F5F5;padding:12px 24px;border-radius:8px;font-size:0.85rem;z-index:9999;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),opacity 0.3s;opacity:0;min-width:220px;text-align:center;}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #toast.success{border-color:rgba(16,185,129,0.5);}
+    #toast.err{border-color:rgba(200,16,46,0.5);}
+
+    .stat-mini{background:#202020;border:1px solid #2A2A2A;border-radius:10px;padding:16px;}
+    .fade-in{animation:fadeIn 0.4s ease both;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+    .history-item{padding:12px 0;border-bottom:1px solid #252525;}
+    .history-item:last-child{border-bottom:none;}
+
+    @media(max-width:768px){
+      #sidebar{transform:translateX(-100%);}
+      #sidebar.open{transform:translateX(0);}
+      #main{margin-left:0;}
+      .form-grid{grid-template-columns:1fr;}
+      #detailPanel{width:100%;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;"></div>
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="flex items-center gap-3">
+      <div style="width:36px;height:36px;border-radius:8px;background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-family:'Bebas Neue';font-size:1.1rem;color:#C8102E;">AK</span>
+      </div>
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:0.1em;color:#fff;line-height:1;">AK AGENCY</div>
+        <div style="font-size:0.65rem;color:#4A4A4A;">FMCG Distribution</div>
+      </div>
+    </div>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding-bottom:8px;">
+    <div class="nav-section-label">Main</div>
+    <a href="dashboard.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</a>
+    <a href="billing.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Billing</a>
+    <div class="nav-section-label">Management</div>
+    <a href="products.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Products</a>
+    <a href="retailers.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Retailers</a>
+    <a href="stock.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>Stock</a>
+    <a href="credits.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>Credits</a>
+    <div class="nav-section-label">Analytics</div>
+    <a href="reports.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Reports</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button onclick="logoutUser()" class="nav-item" style="width:100%;border:none;background:none;text-align:left;">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <header id="topbar">
+    <div class="flex items-center gap-4">
+      <button onclick="openSidebar()" id="menuBtn" style="display:none;padding:8px;border-radius:8px;background:none;border:none;cursor:pointer;">
+        <svg style="width:20px;height:20px;color:#ccc;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h2 style="font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:0.08em;color:#fff;line-height:1;">Retailers</h2>
+        <p style="font-size:0.75rem;color:#6B6B6B;" id="retailerCountLabel">Loading...</p>
+      </div>
+    </div>
+    <div class="avatar" id="userAvatar">A</div>
+  </header>
+
+  <main id="content">
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+      <div class="stat-mini">
+        <div style="font-size:1.5rem;font-weight:700;color:#fff;" id="statTotal">0</div>
+        <div style="font-size:0.78rem;color:#6B6B6B;margin-top:2px;">Total Retailers</div>
+      </div>
+      <div class="stat-mini">
+        <div style="font-size:1.5rem;font-weight:700;color:#FF4D6D;" id="statCredit">₹0</div>
+        <div style="font-size:0.78rem;color:#6B6B6B;margin-top:2px;">Total Credit Due</div>
+      </div>
+      <div class="stat-mini">
+        <div style="font-size:1.5rem;font-weight:700;color:#F59E0B;" id="statOverdue">0</div>
+        <div style="font-size:0.78rem;color:#6B6B6B;margin-top:2px;">With Pending Dues</div>
+      </div>
+      <div class="stat-mini">
+        <div style="font-size:1.5rem;font-weight:700;color:#10B981;" id="statClear">0</div>
+        <div style="font-size:0.78rem;color:#6B6B6B;margin-top:2px;">Clear Balance</div>
+      </div>
+    </div>
+
+    <!-- Action bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="position:relative;">
+          <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#4A4A4A;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input id="searchInput" type="text" placeholder="Search retailers…" class="filter-input" style="padding-left:36px;width:220px;" oninput="filterRetailers()" />
+        </div>
+        <select id="areaFilter" class="filter-input" onchange="filterRetailers()">
+          <option value="">All Areas</option>
+        </select>
+        <select id="creditFilter" class="filter-input" onchange="filterRetailers()">
+          <option value="">All</option>
+          <option value="due">Has Due</option>
+          <option value="clear">Clear</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="openAddModal()">
+        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Add Retailer
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="section-card fade-in">
+      <div style="overflow-x:auto;">
+        <table class="ak-table">
+          <thead>
+            <tr>
+              <th>Shop Name</th>
+              <th>Owner</th>
+              <th>Mobile</th>
+              <th>Area</th>
+              <th>Total Billed</th>
+              <th>Credit Due</th>
+              <th>Status</th>
+              <th style="text-align:center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="retailersTableBody">
+            <tr><td colspan="8" style="text-align:center;color:#4A4A4A;padding:40px;">
+              <svg style="width:40px;height:40px;margin:0 auto 10px;display:block;opacity:0.2;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              No retailers yet. Click "Add Retailer" to get started.
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div style="padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="font-size:1rem;font-weight:700;color:#fff;" id="modalTitle">Add Retailer</h3>
+      <button class="btn-icon" onclick="closeModal()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div style="padding:20px 24px;">
+      <input type="hidden" id="editRetailerId" />
+
+      <div style="margin-bottom:14px;">
+        <label class="form-label">Shop Name *</label>
+        <input id="fShop" type="text" class="form-input" placeholder="e.g. Sri Murugan Stores" />
+      </div>
+
+      <div class="form-grid" style="margin-bottom:14px;">
+        <div>
+          <label class="form-label">Owner Name *</label>
+          <input id="fOwner" type="text" class="form-input" placeholder="Full name" />
+        </div>
+        <div>
+          <label class="form-label">Mobile Number *</label>
+          <input id="fMobile" type="tel" class="form-input" placeholder="10-digit number" maxlength="10" />
+        </div>
+      </div>
+
+      <div class="form-grid" style="margin-bottom:14px;">
+        <div>
+          <label class="form-label">Area / Location *</label>
+          <input id="fArea" type="text" class="form-input" placeholder="e.g. T. Nagar, Chennai" />
+        </div>
+        <div>
+          <label class="form-label">Shop Type</label>
+          <select id="fType" class="form-input">
+            <option value="">Select type</option>
+            <option>Grocery Store</option>
+            <option>Supermarket</option>
+            <option>Mini Mart</option>
+            <option>Wholesale</option>
+            <option>Hotel / Restaurant</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid" style="margin-bottom:14px;">
+        <div>
+          <label class="form-label">Credit Limit (₹)</label>
+          <input id="fCreditLimit" type="number" min="0" class="form-input" placeholder="5000" />
+        </div>
+        <div>
+          <label class="form-label">Opening Balance (₹)</label>
+          <input id="fOpeningBalance" type="number" min="0" value="0" class="form-input" placeholder="0" />
+        </div>
+      </div>
+
+      <div style="margin-bottom:4px;">
+        <label class="form-label">Address / Notes</label>
+        <textarea id="fAddress" class="form-input" rows="2" placeholder="Full address or notes…" style="resize:vertical;"></textarea>
+      </div>
+
+      <p id="formError" style="color:#FF4D6D;font-size:0.78rem;margin-top:10px;display:none;"></p>
+    </div>
+    <div style="padding:0 24px 22px;display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveRetailer()" id="saveBtn">
+        <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        Save Retailer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div id="deleteModal">
+  <div style="background:#1A1A1A;border:1px solid #2A2A2A;border-radius:14px;padding:28px;max-width:380px;width:100%;text-align:center;animation:modalIn 0.2s ease;">
+    <div style="width:52px;height:52px;border-radius:50%;background:rgba(200,16,46,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <svg style="width:24px;height:24px;color:#C8102E;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    </div>
+    <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;">Delete Retailer?</h3>
+    <p style="font-size:0.85rem;color:#6B6B6B;margin-bottom:22px;" id="deleteRetailerName">This cannot be undone.</p>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn-ghost" onclick="closeDeleteModal()">Cancel</button>
+      <button onclick="confirmDelete()" style="background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.85rem;font-weight:600;cursor:pointer;">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- COLLECT PAYMENT MODAL -->
+<div id="paymentModal">
+  <div style="background:#1A1A1A;border:1px solid #2A2A2A;border-radius:16px;padding:28px;max-width:400px;width:100%;animation:modalIn 0.25s ease;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h3 style="font-size:1rem;font-weight:700;color:#fff;">Collect Payment</h3>
+      <button class="btn-icon" onclick="closePaymentModal()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div style="background:#252525;border-radius:10px;padding:14px;margin-bottom:16px;">
+      <div style="font-weight:700;color:#fff;font-size:0.95rem;" id="pmRetailerName">—</div>
+      <div style="font-size:0.82rem;color:#6B6B6B;margin-top:2px;">Current Credit Due: <span id="pmCurrentDue" style="color:#FF4D6D;font-weight:700;">₹0</span></div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label class="form-label">Amount Collected (₹) *</label>
+      <input id="pmAmount" type="number" min="1" class="form-input" placeholder="Enter amount" />
+    </div>
+    <div style="margin-bottom:14px;">
+      <label class="form-label">Payment Mode</label>
+      <select id="pmMode" class="form-input">
+        <option>Cash</option>
+        <option>UPI</option>
+        <option>Bank Transfer</option>
+        <option>Cheque</option>
+      </select>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label class="form-label">Note (optional)</label>
+      <input id="pmNote" type="text" class="form-input" placeholder="e.g. Collected at shop" />
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-ghost" onclick="closePaymentModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmPayment()">
+        <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        Confirm Payment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div id="detailOverlay" onclick="closeDetail()"></div>
+<div id="detailPanel">
+  <div style="padding:20px;border-bottom:1px solid #2A2A2A;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#1A1A1A;z-index:10;">
+    <h3 style="font-weight:700;color:#fff;font-size:0.95rem;">Retailer Details</h3>
+    <button class="btn-icon" onclick="closeDetail()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div id="detailContent" style="padding:20px;"></div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5CGQsAkuWUuMVWDXeRiTjVwCFHX-8hOM",
+    authDomain: "ak-agency-c4047.firebaseapp.com",
+    projectId: "ak-agency-c4047",
+    storageBucket: "ak-agency-c4047.firebasestorage.app",
+    messagingSenderId: "270275192870",
+    appId: "1:270275192870:web:0a3dd66eddc4094eb85ee7"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  auth.onAuthStateChanged(user => {
+    if (!user) { window.location.href = "../index.html"; return; }
+    document.getElementById("userAvatar").textContent = user.email[0].toUpperCase();
+    loadRetailers();
+  });
+  function logoutUser() { auth.signOut().then(() => window.location.href = "../index.html"); }
+  function openSidebar()  { document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").style.display="block"; }
+  function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("sidebarOverlay").style.display="none"; }
+  if (window.innerWidth <= 768) document.getElementById("menuBtn").style.display = "block";
+
+  let allRetailers = [];
+  let deleteTargetId = null;
+  let paymentTargetId = null;
+
+  // ── Load Retailers ──────────────────────────────────────
+  function loadRetailers() {
+    db.collection("retailers").orderBy("shopName").onSnapshot(snap => {
+      allRetailers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderStats();
+      populateAreaFilter();
+      filterRetailers();
+      document.getElementById("retailerCountLabel").textContent = allRetailers.length + " retailers total";
+    });
+  }
+
+  function renderStats() {
+    let totalCredit = 0, withDue = 0, clear = 0;
+    allRetailers.forEach(r => {
+      const credit = r.creditBalance || 0;
+      totalCredit += credit;
+      if (credit > 0) withDue++; else clear++;
+    });
+    document.getElementById("statTotal").textContent  = allRetailers.length;
+    document.getElementById("statCredit").textContent = "₹" + totalCredit.toLocaleString("en-IN");
+    document.getElementById("statOverdue").textContent = withDue;
+    document.getElementById("statClear").textContent   = clear;
+  }
+
+  function populateAreaFilter() {
+    const areas = [...new Set(allRetailers.map(r => r.area).filter(Boolean))].sort();
+    const sel = document.getElementById("areaFilter");
+    const current = sel.value;
+    sel.innerHTML = `<option value="">All Areas</option>` + areas.map(a => `<option value="${a}">${a}</option>`).join("");
+    sel.value = current;
+  }
+
+  function filterRetailers() {
+    const q      = document.getElementById("searchInput").value.toLowerCase();
+    const area   = document.getElementById("areaFilter").value;
+    const credit = document.getElementById("creditFilter").value;
+    const filtered = allRetailers.filter(r => {
+      const matchQ = !q || r.shopName?.toLowerCase().includes(q) || r.ownerName?.toLowerCase().includes(q) || r.mobile?.includes(q);
+      const matchA = !area   || r.area === area;
+      const matchC = !credit || (credit === "due" ? (r.creditBalance||0) > 0 : (r.creditBalance||0) === 0);
+      return matchQ && matchA && matchC;
+    });
+    renderTable(filtered);
+  }
+
+  function renderTable(retailers) {
+    const tbody = document.getElementById("retailersTableBody");
+    if (!retailers.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#4A4A4A;padding:40px;">No retailers match your filters.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = retailers.map(r => {
+      const credit = r.creditBalance || 0;
+      const limit  = r.creditLimit   || 0;
+      const statusCls = credit === 0 ? "pill-green" : credit > limit && limit > 0 ? "pill-red" : "pill-amber";
+      const statusTxt = credit === 0 ? "Clear" : credit > limit && limit > 0 ? "Over Limit" : "Due";
+      return `<tr>
+        <td>
+          <div style="font-weight:600;color:#fff;cursor:pointer;" onclick="openDetail('${r.id}')">${r.shopName}</div>
+          <div style="font-size:0.72rem;color:#4A4A4A;">${r.shopType||""}</div>
+        </td>
+        <td>${r.ownerName||"—"}</td>
+        <td>
+          <a href="tel:${r.mobile}" style="color:#60A5FA;text-decoration:none;">${r.mobile||"—"}</a>
+        </td>
+        <td><span class="pill pill-blue">${r.area||"—"}</span></td>
+        <td style="color:#ccc;">₹${(r.totalBilled||0).toLocaleString("en-IN")}</td>
+        <td style="font-weight:700;color:${credit>0?"#FF4D6D":"#10B981"};">₹${credit.toLocaleString("en-IN")}</td>
+        <td><span class="pill ${statusCls}">${statusTxt}</span></td>
+        <td style="text-align:center;">
+          <div style="display:flex;gap:4px;justify-content:center;">
+            <button class="btn-icon" title="View Details" onclick="openDetail('${r.id}')">
+              <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+            ${credit > 0 ? `<button class="btn-icon" title="Collect Payment" onclick="openPaymentModal('${r.id}')" style="color:#10B981;">
+              <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </button>` : ""}
+            <button class="btn-icon" title="Edit" onclick='openEditModal(${JSON.stringify(r)})'>
+              <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>
+            <button class="btn-icon danger" title="Delete" onclick="openDeleteModal('${r.id}','${(r.shopName||"").replace(/'/g,"\\'")}')">
+              <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>`;
+    }).join("");
+  }
+
+  // ── Add / Edit Modal ────────────────────────────────────
+  function openAddModal() {
+    clearForm();
+    document.getElementById("modalTitle").textContent = "Add Retailer";
+    document.getElementById("editRetailerId").value = "";
+    document.getElementById("modalOverlay").classList.add("open");
+  }
+
+  function openEditModal(r) {
+    clearForm();
+    document.getElementById("modalTitle").textContent   = "Edit Retailer";
+    document.getElementById("editRetailerId").value     = r.id;
+    document.getElementById("fShop").value              = r.shopName || "";
+    document.getElementById("fOwner").value             = r.ownerName || "";
+    document.getElementById("fMobile").value            = r.mobile || "";
+    document.getElementById("fArea").value              = r.area || "";
+    document.getElementById("fType").value              = r.shopType || "";
+    document.getElementById("fCreditLimit").value       = r.creditLimit || "";
+    document.getElementById("fOpeningBalance").value    = r.creditBalance || "0";
+    document.getElementById("fAddress").value           = r.address || "";
+    document.getElementById("modalOverlay").classList.add("open");
+  }
+
+  function closeModal() { document.getElementById("modalOverlay").classList.remove("open"); clearForm(); }
+  function handleOverlayClick(e) { if (e.target === document.getElementById("modalOverlay")) closeModal(); }
+
+  function clearForm() {
+    ["fShop","fOwner","fMobile","fArea","fAddress","fCreditLimit"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("fType").value = "";
+    document.getElementById("fOpeningBalance").value = "0";
+    document.getElementById("formError").style.display = "none";
+  }
+
+  async function saveRetailer() {
+    const shopName    = document.getElementById("fShop").value.trim();
+    const ownerName   = document.getElementById("fOwner").value.trim();
+    const mobile      = document.getElementById("fMobile").value.trim();
+    const area        = document.getElementById("fArea").value.trim();
+    const shopType    = document.getElementById("fType").value;
+    const creditLimit = parseFloat(document.getElementById("fCreditLimit").value) || 0;
+    const openingBal  = parseFloat(document.getElementById("fOpeningBalance").value) || 0;
+    const address     = document.getElementById("fAddress").value.trim();
+    const errEl       = document.getElementById("formError");
+
+    if (!shopName)  { errEl.textContent = "Shop name is required.";    errEl.style.display="block"; return; }
+    if (!ownerName) { errEl.textContent = "Owner name is required.";   errEl.style.display="block"; return; }
+    if (!mobile || mobile.length < 10) { errEl.textContent = "Enter valid 10-digit mobile number."; errEl.style.display="block"; return; }
+    if (!area)      { errEl.textContent = "Area/location is required."; errEl.style.display="block"; return; }
+    errEl.style.display = "none";
+
+    const saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = true;
+
+    const data = { shopName, ownerName, mobile, area, shopType, creditLimit, address, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+    const editId = document.getElementById("editRetailerId").value;
+
+    try {
+      if (editId) {
+        await db.collection("retailers").doc(editId).update(data);
+        showToast("Retailer updated!", "success");
+      } else {
+        data.creditBalance = openingBal;
+        data.totalBilled   = 0;
+        data.createdAt     = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection("retailers").add(data);
+        showToast("Retailer added!", "success");
+      }
+      closeModal();
+    } catch(err) {
+      showToast("Failed to save. Try again.", "err");
+    } finally {
+      saveBtn.disabled = false;
+    }
+  }
+
+  // ── Delete ──────────────────────────────────────────────
+  function openDeleteModal(id, name) {
+    deleteTargetId = id;
+    document.getElementById("deleteRetailerName").textContent = `"${name}" will be permanently deleted.`;
+    document.getElementById("deleteModal").classList.add("open");
+  }
+  function closeDeleteModal() { deleteTargetId = null; document.getElementById("deleteModal").classList.remove("open"); }
+  async function confirmDelete() {
+    if (!deleteTargetId) return;
+    try {
+      await db.collection("retailers").doc(deleteTargetId).delete();
+      showToast("Retailer deleted.", "success");
+    } catch(e) { showToast("Delete failed.", "err"); }
+    closeDeleteModal();
+  }
+
+  // ── Collect Payment ─────────────────────────────────────
+  function openPaymentModal(id) {
+    const r = allRetailers.find(x => x.id === id);
+    if (!r) return;
+    paymentTargetId = id;
+    document.getElementById("pmRetailerName").textContent = r.shopName;
+    document.getElementById("pmCurrentDue").textContent   = "₹" + (r.creditBalance||0).toLocaleString("en-IN");
+    document.getElementById("pmAmount").value = "";
+    document.getElementById("pmNote").value   = "";
+    document.getElementById("paymentModal").classList.add("open");
+  }
+  function closePaymentModal() { paymentTargetId = null; document.getElementById("paymentModal").classList.remove("open"); }
+
+  async function confirmPayment() {
+    const amount = parseFloat(document.getElementById("pmAmount").value) || 0;
+    if (amount <= 0) { showToast("Enter a valid amount.", "err"); return; }
+    const r = allRetailers.find(x => x.id === paymentTargetId);
+    if (!r) return;
+
+    const newCredit = Math.max((r.creditBalance||0) - amount, 0);
+    const mode      = document.getElementById("pmMode").value;
+    const note      = document.getElementById("pmNote").value.trim();
+
+    try {
+      // Update retailer credit balance
+      await db.collection("retailers").doc(paymentTargetId).update({ creditBalance: newCredit });
+
+      // Save payment record
+      await db.collection("payments").add({
+        retailerId:   paymentTargetId,
+        retailerName: r.shopName,
+        amount, mode, note,
+        previousDue:  r.creditBalance || 0,
+        newDue:       newCredit,
+        createdAt:    firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      showToast(`₹${amount.toLocaleString("en-IN")} collected from ${r.shopName}!`, "success");
+      closePaymentModal();
+    } catch(err) {
+      showToast("Payment update failed.", "err");
+    }
+  }
+
+  // ── Detail Panel ────────────────────────────────────────
+  async function openDetail(id) {
+    const r = allRetailers.find(x => x.id === id);
+    if (!r) return;
+
+    // Fetch recent invoices for this retailer
+    const invSnap = await db.collection("invoices")
+      .where("retailerId","==",id)
+      .orderBy("createdAt","desc")
+      .limit(10)
+      .get();
+    const invoices = invSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Fetch recent payments
+    const paySnap = await db.collection("payments")
+      .where("retailerId","==",id)
+      .orderBy("createdAt","desc")
+      .limit(5)
+      .get();
+    const payments = paySnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    const credit = r.creditBalance || 0;
+    document.getElementById("detailContent").innerHTML = `
+      <!-- Header -->
+      <div style="background:#252525;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <div style="font-weight:700;color:#fff;font-size:1.1rem;">${r.shopName}</div>
+            <div style="font-size:0.82rem;color:#6B6B6B;margin-top:2px;">${r.shopType||""}</div>
+          </div>
+          <span class="pill ${credit===0?"pill-green":"pill-red"}">${credit===0?"Clear":"Due"}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.82rem;">
+          <div><span style="color:#6B6B6B;">Owner:</span> <span style="color:#ccc;">${r.ownerName||"—"}</span></div>
+          <div><span style="color:#6B6B6B;">Mobile:</span> <a href="tel:${r.mobile}" style="color:#60A5FA;">${r.mobile||"—"}</a></div>
+          <div><span style="color:#6B6B6B;">Area:</span> <span style="color:#ccc;">${r.area||"—"}</span></div>
+          <div><span style="color:#6B6B6B;">Limit:</span> <span style="color:#ccc;">₹${(r.creditLimit||0).toLocaleString("en-IN")}</span></div>
+        </div>
+        ${r.address ? `<div style="font-size:0.8rem;color:#6B6B6B;margin-top:8px;">${r.address}</div>` : ""}
+      </div>
+
+      <!-- Credit summary -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+        <div style="background:#252525;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:1.2rem;font-weight:700;color:#fff;">₹${(r.totalBilled||0).toLocaleString("en-IN")}</div>
+          <div style="font-size:0.75rem;color:#6B6B6B;margin-top:2px;">Total Billed</div>
+        </div>
+        <div style="background:#252525;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:1.2rem;font-weight:700;color:${credit>0?"#FF4D6D":"#10B981"};">₹${credit.toLocaleString("en-IN")}</div>
+          <div style="font-size:0.75rem;color:#6B6B6B;margin-top:2px;">Credit Due</div>
+        </div>
+      </div>
+
+      ${credit > 0 ? `<button class="btn-primary" style="width:100%;justify-content:center;margin-bottom:16px;" onclick="closeDetail();openPaymentModal('${r.id}')">
+        <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Collect Payment
+      </button>` : ""}
+
+      <!-- Recent invoices -->
+      <div style="font-size:0.8rem;font-weight:700;color:#fff;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Recent Invoices</div>
+      ${invoices.length ? invoices.map(inv => `
+        <div class="history-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;color:#C8102E;font-size:0.85rem;">${inv.invoiceNumber||"—"}</div>
+              <div style="font-size:0.75rem;color:#6B6B6B;">${inv.invoiceDate||"—"} · ${(inv.items||[]).length} items</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:700;color:#fff;font-size:0.9rem;">₹${Number(inv.total||0).toLocaleString("en-IN")}</div>
+              <span class="pill ${inv.status==="paid"?"pill-green":inv.status==="partial"?"pill-blue":"pill-amber"}" style="font-size:0.65rem;">${inv.status||"pending"}</span>
+            </div>
+          </div>
+        </div>`).join("") : `<div style="text-align:center;color:#4A4A4A;font-size:0.85rem;padding:16px;">No invoices yet</div>`}
+
+      <!-- Payment history -->
+      ${payments.length ? `
+      <div style="font-size:0.8rem;font-weight:700;color:#fff;margin:16px 0 10px;text-transform:uppercase;letter-spacing:0.08em;">Payment History</div>
+      ${payments.map(p => `
+        <div class="history-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;color:#10B981;font-size:0.85rem;">₹${Number(p.amount||0).toLocaleString("en-IN")} collected</div>
+              <div style="font-size:0.75rem;color:#6B6B6B;">${p.mode||""} ${p.note ? "· "+p.note : ""}</div>
+            </div>
+            <div style="font-size:0.72rem;color:#4A4A4A;">${p.createdAt?.toDate?.()?.toLocaleDateString("en-IN")||"—"}</div>
+          </div>
+        </div>`).join("")}` : ""}
+    `;
+
+    document.getElementById("detailPanel").classList.add("open");
+    document.getElementById("detailOverlay").classList.add("open");
+  }
+
+  function closeDetail() {
+    document.getElementById("detailPanel").classList.remove("open");
+    document.getElementById("detailOverlay").classList.remove("open");
+  }
+
+  // ── Toast ────────────────────────────────────────────────
+  function showToast(msg, type="success") {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.className = "show " + type;
+    setTimeout(() => t.className = "", 3000);
+  }
+</script>
+</body>
+</html>

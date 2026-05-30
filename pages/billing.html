@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AK Agency — Billing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"DM Sans",sans-serif;background:#0D0D0D;color:#F5F5F5;min-height:100vh;display:flex;}
+    ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:#1A1A1A;} ::-webkit-scrollbar-thumb{background:#C8102E;border-radius:4px;}
+
+    /* Sidebar */
+    #sidebar{width:240px;min-height:100vh;background:#1A1A1A;border-right:1px solid #2A2A2A;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid #2A2A2A;}
+    .nav-section-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#4A4A4A;padding:20px 20px 8px;font-weight:600;}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;margin:2px 10px;border-radius:8px;color:#6B6B6B;font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+    .nav-item:hover{background:rgba(200,16,46,0.08);color:#F5F5F5;}
+    .nav-item.active{background:rgba(200,16,46,0.15);color:#fff;}
+    .nav-item.active svg{color:#C8102E;}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0;}
+    .sidebar-bottom{margin-top:auto;padding:16px;border-top:1px solid #2A2A2A;}
+
+    /* Main */
+    #main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    #topbar{height:64px;background:#1A1A1A;border-bottom:1px solid #2A2A2A;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C8102E,#9B0B22);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;}
+    #content{padding:28px;flex:1;}
+
+    /* Tabs */
+    .tab-bar{display:flex;gap:4px;background:#1A1A1A;border:1px solid #2A2A2A;border-radius:10px;padding:4px;margin-bottom:24px;width:fit-content;}
+    .tab-btn{padding:8px 20px;border-radius:7px;border:none;background:none;color:#6B6B6B;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .tab-btn.active{background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;}
+
+    /* Cards */
+    .section-card{background:#202020;border:1px solid #2A2A2A;border-radius:14px;padding:22px;}
+
+    /* Buttons */
+    .btn-primary{background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform 0.15s,box-shadow 0.15s;font-family:"DM Sans",sans-serif;}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,16,46,0.35);}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+    .btn-ghost{background:rgba(255,255,255,0.05);color:#ccc;border:1px solid #2A2A2A;border-radius:8px;padding:10px 16px;font-size:0.85rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .btn-ghost:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    .btn-icon{background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;color:#6B6B6B;}
+    .btn-icon:hover{background:rgba(255,255,255,0.06);color:#fff;}
+    .btn-icon.danger:hover{background:rgba(200,16,46,0.1);color:#FF4D6D;}
+
+    /* Form */
+    .form-label{display:block;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;}
+    .form-input{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid #2A2A2A;border-radius:8px;padding:10px 14px;color:#F5F5F5;font-size:0.875rem;outline:none;font-family:"DM Sans",sans-serif;transition:border-color 0.2s,box-shadow 0.2s;}
+    .form-input:focus{border-color:#C8102E;box-shadow:0 0 0 3px rgba(200,16,46,0.12);}
+    .form-input::placeholder{color:#3A3A3A;}
+    select.form-input option{background:#1A1A1A;}
+    .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+
+    /* Invoice builder */
+    .product-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #252525;}
+    .product-row:last-child{border-bottom:none;}
+
+    /* Table */
+    .ak-table{width:100%;border-collapse:collapse;}
+    .ak-table th{text-align:left;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A4A4A;padding:10px 14px;border-bottom:1px solid #2A2A2A;}
+    .ak-table td{padding:12px 14px;font-size:0.85rem;color:#ccc;border-bottom:1px solid #222;}
+    .ak-table tr:last-child td{border-bottom:none;}
+    .ak-table tr:hover td{background:rgba(255,255,255,0.02);color:#fff;}
+
+    /* Pills */
+    .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:600;}
+    .pill-green{background:rgba(16,185,129,0.15);color:#10B981;}
+    .pill-red{background:rgba(200,16,46,0.15);color:#FF4D6D;}
+    .pill-amber{background:rgba(245,158,11,0.15);color:#F59E0B;}
+    .pill-blue{background:rgba(59,130,246,0.15);color:#60A5FA;}
+
+    /* Toast */
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1A1A;border:1px solid #2A2A2A;color:#F5F5F5;padding:12px 24px;border-radius:8px;font-size:0.85rem;z-index:9999;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),opacity 0.3s;opacity:0;min-width:220px;text-align:center;}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #toast.success{border-color:rgba(16,185,129,0.5);}
+    #toast.err{border-color:rgba(200,16,46,0.5);}
+
+    /* Print invoice */
+    #printArea{display:none;}
+    @media print{
+      body > *{display:none !important;}
+      #printArea{display:block !important;background:#fff;color:#000;padding:32px;font-family:"DM Sans",sans-serif;}
+    }
+
+    /* Summary box */
+    .summary-box{background:#252525;border-radius:10px;padding:16px;}
+    .summary-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:0.875rem;}
+    .summary-row.total{border-top:1px solid #333;margin-top:8px;padding-top:12px;font-weight:700;font-size:1rem;color:#fff;}
+
+    /* Autocomplete dropdown */
+    .autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#1A1A1A;border:1px solid #2A2A2A;border-radius:8px;z-index:200;max-height:200px;overflow-y:auto;margin-top:4px;}
+    .autocomplete-item{padding:10px 14px;font-size:0.85rem;cursor:pointer;transition:background 0.15s;}
+    .autocomplete-item:hover{background:rgba(200,16,46,0.1);color:#fff;}
+
+    /* Modal */
+    #viewModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:16px;}
+    #viewModal.open{display:flex;}
+    .modal{background:#1A1A1A;border:1px solid #2A2A2A;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;animation:modalIn 0.25s cubic-bezier(0.22,1,0.36,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);}}
+
+    .fade-in{animation:fadeIn 0.4s ease both;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+    @media(max-width:768px){
+      #sidebar{transform:translateX(-100%);}
+      #sidebar.open{transform:translateX(0);}
+      #main{margin-left:0;}
+      .form-grid-2,.form-grid-3{grid-template-columns:1fr;}
+      .product-row{grid-template-columns:1fr 1fr;gap:8px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;"></div>
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="flex items-center gap-3">
+      <div style="width:36px;height:36px;border-radius:8px;background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-family:'Bebas Neue';font-size:1.1rem;color:#C8102E;">AK</span>
+      </div>
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:0.1em;color:#fff;line-height:1;">AK AGENCY</div>
+        <div style="font-size:0.65rem;color:#4A4A4A;">FMCG Distribution</div>
+      </div>
+    </div>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding-bottom:8px;">
+    <div class="nav-section-label">Main</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Dashboard
+    </a>
+    <a href="billing.html" class="nav-item active">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Billing
+    </a>
+    <div class="nav-section-label">Management</div>
+    <a href="products.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Products
+    </a>
+    <a href="retailers.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Retailers
+    </a>
+    <a href="stock.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+      Stock
+    </a>
+    <a href="credits.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Credits
+    </a>
+    <div class="nav-section-label">Analytics</div>
+    <a href="reports.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button onclick="logoutUser()" class="nav-item" style="width:100%;border:none;background:none;text-align:left;">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <header id="topbar">
+    <div class="flex items-center gap-4">
+      <button onclick="openSidebar()" id="menuBtn" style="display:none;padding:8px;border-radius:8px;background:none;border:none;cursor:pointer;">
+        <svg style="width:20px;height:20px;color:#ccc;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h2 style="font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:0.08em;color:#fff;line-height:1;">Billing</h2>
+        <p style="font-size:0.75rem;color:#6B6B6B;">Create invoices & track payments</p>
+      </div>
+    </div>
+    <div class="avatar" id="userAvatar">A</div>
+  </header>
+
+  <main id="content">
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('create', this)">Create Invoice</button>
+      <button class="tab-btn" onclick="switchTab('list', this)">All Invoices</button>
+    </div>
+
+    <!-- ══ TAB: CREATE INVOICE ══ -->
+    <div id="tabCreate">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;">
+
+        <!-- Left: Invoice Form -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Invoice Meta -->
+          <div class="section-card">
+            <div style="font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+              <svg style="width:16px;height:16px;color:#C8102E;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              Invoice Details
+            </div>
+            <div class="form-grid-3" style="margin-bottom:14px;">
+              <div>
+                <label class="form-label">Invoice No.</label>
+                <input id="invoiceNo" class="form-input" readonly style="background:rgba(200,16,46,0.05);color:#C8102E;font-weight:700;" />
+              </div>
+              <div>
+                <label class="form-label">Invoice Date</label>
+                <input id="invoiceDate" type="date" class="form-input" />
+              </div>
+              <div>
+                <label class="form-label">Due Date</label>
+                <input id="dueDate" type="date" class="form-input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Retailer -->
+          <div class="section-card">
+            <div style="font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+              <svg style="width:16px;height:16px;color:#C8102E;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              Select Retailer
+            </div>
+            <div style="position:relative;">
+              <input id="retailerSearch" class="form-input" placeholder="Type shop name or owner name…" oninput="searchRetailers()" autocomplete="off" />
+              <div id="retailerDropdown" class="autocomplete-list" style="display:none;"></div>
+            </div>
+            <div id="selectedRetailerCard" style="display:none;margin-top:12px;background:#252525;border-radius:10px;padding:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:start;">
+                <div>
+                  <div style="font-weight:700;color:#fff;font-size:0.95rem;" id="rcShop">—</div>
+                  <div style="font-size:0.8rem;color:#6B6B6B;margin-top:2px;" id="rcOwner">—</div>
+                  <div style="font-size:0.8rem;color:#6B6B6B;" id="rcArea">—</div>
+                  <div style="font-size:0.8rem;color:#6B6B6B;" id="rcPhone">—</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:0.72rem;color:#6B6B6B;margin-bottom:2px;">Credit Balance</div>
+                  <div style="font-weight:700;color:#FF4D6D;font-size:1rem;" id="rcCredit">₹0</div>
+                  <button onclick="clearRetailer()" style="margin-top:8px;font-size:0.72rem;color:#6B6B6B;background:none;border:none;cursor:pointer;text-decoration:underline;">Change</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products -->
+          <div class="section-card">
+            <div style="font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg style="width:16px;height:16px;color:#C8102E;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                Products
+              </div>
+              <button class="btn-ghost" style="padding:6px 12px;font-size:0.78rem;" onclick="addProductRow()">+ Add Item</button>
+            </div>
+
+            <!-- Header -->
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;padding:0 0 8px;border-bottom:1px solid #2A2A2A;">
+              <span style="font-size:0.68rem;color:#4A4A4A;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Product</span>
+              <span style="font-size:0.68rem;color:#4A4A4A;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Qty</span>
+              <span style="font-size:0.68rem;color:#4A4A4A;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Price</span>
+              <span style="font-size:0.68rem;color:#4A4A4A;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Total</span>
+              <span></span>
+            </div>
+
+            <div id="productRowsContainer"></div>
+
+            <button class="btn-ghost" style="width:100%;justify-content:center;margin-top:12px;" onclick="addProductRow()">
+              <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Add Another Product
+            </button>
+          </div>
+
+          <!-- Notes -->
+          <div class="section-card">
+            <label class="form-label">Notes / Remarks</label>
+            <textarea id="invoiceNotes" class="form-input" rows="2" placeholder="Optional notes for this invoice…" style="resize:vertical;"></textarea>
+          </div>
+        </div>
+
+        <!-- Right: Summary -->
+        <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:16px;">
+          <div class="section-card">
+            <div style="font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:16px;">Invoice Summary</div>
+            <div class="summary-box">
+              <div class="summary-row"><span style="color:#6B6B6B;">Subtotal</span><span id="sumSubtotal">₹0.00</span></div>
+              <div class="summary-row">
+                <span style="color:#6B6B6B;">Discount</span>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <input id="discountVal" type="number" min="0" value="0" style="width:60px;background:rgba(255,255,255,0.05);border:1px solid #2A2A2A;border-radius:6px;padding:4px 8px;color:#fff;font-size:0.82rem;outline:none;" oninput="recalculate()" />
+                  <select id="discountType" style="background:#252525;border:1px solid #2A2A2A;border-radius:6px;padding:4px 6px;color:#ccc;font-size:0.78rem;outline:none;" onchange="recalculate()">
+                    <option value="flat">₹</option>
+                    <option value="pct">%</option>
+                  </select>
+                </div>
+              </div>
+              <div class="summary-row">
+                <span style="color:#6B6B6B;">GST</span>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <input id="gstPct" type="number" min="0" max="28" value="0" style="width:60px;background:rgba(255,255,255,0.05);border:1px solid #2A2A2A;border-radius:6px;padding:4px 8px;color:#fff;font-size:0.82rem;outline:none;" oninput="recalculate()" />
+                  <span style="font-size:0.78rem;color:#6B6B6B;">%</span>
+                  <span id="sumGst" style="margin-left:auto;">₹0.00</span>
+                </div>
+              </div>
+              <div class="summary-row total">
+                <span>Grand Total</span>
+                <span id="sumTotal" style="color:#C8102E;font-size:1.2rem;">₹0.00</span>
+              </div>
+            </div>
+
+            <!-- Payment -->
+            <div style="margin-top:16px;">
+              <label class="form-label">Payment Status</label>
+              <select id="paymentStatus" class="form-input" onchange="toggleAmountPaid()">
+                <option value="pending">Pending (Credit)</option>
+                <option value="partial">Partial Payment</option>
+                <option value="paid">Fully Paid</option>
+              </select>
+            </div>
+            <div id="amountPaidRow" style="margin-top:12px;display:none;">
+              <label class="form-label">Amount Paid (₹)</label>
+              <input id="amountPaid" type="number" min="0" class="form-input" placeholder="0.00" oninput="recalculate()" />
+              <div style="margin-top:6px;font-size:0.8rem;color:#F59E0B;">
+                Balance due: <span id="balanceDue" style="font-weight:700;">₹0.00</span>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px;">
+              <button class="btn-primary" style="width:100%;justify-content:center;" onclick="saveInvoice()">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                Save Invoice
+              </button>
+              <button class="btn-ghost" style="width:100%;justify-content:center;" onclick="printInvoice()">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                Print Invoice
+              </button>
+              <button class="btn-ghost" style="width:100%;justify-content:center;" onclick="downloadPDF()">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Download PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: ALL INVOICES ══ -->
+    <div id="tabList" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="position:relative;">
+            <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#4A4A4A;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input id="invoiceSearch" type="text" placeholder="Search invoices…" oninput="filterInvoices()"
+              style="background:rgba(255,255,255,0.04);border:1px solid #2A2A2A;border-radius:8px;padding:9px 14px 9px 36px;color:#F5F5F5;font-size:0.85rem;outline:none;width:220px;" />
+          </div>
+          <select id="statusFilter" onchange="filterInvoices()"
+            style="background:rgba(255,255,255,0.04);border:1px solid #2A2A2A;border-radius:8px;padding:9px 14px;color:#ccc;font-size:0.85rem;outline:none;">
+            <option value="">All Status</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+            <option value="partial">Partial</option>
+          </select>
+        </div>
+        <div style="font-size:0.82rem;color:#6B6B6B;" id="invoiceCountLabel">Loading…</div>
+      </div>
+      <div class="section-card fade-in">
+        <div style="overflow-x:auto;">
+          <table class="ak-table">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Retailer</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Paid</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th style="text-align:center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody">
+              <tr><td colspan="9" style="text-align:center;color:#4A4A4A;padding:40px;">Loading invoices…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- VIEW INVOICE MODAL -->
+<div id="viewModal">
+  <div class="modal" style="max-width:640px;">
+    <div style="padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="font-size:1rem;font-weight:700;color:#fff;">Invoice Details</h3>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn-ghost" style="padding:6px 12px;font-size:0.78rem;" onclick="printModalInvoice()">Print</button>
+        <button class="btn-icon" onclick="document.getElementById('viewModal').classList.remove('open')">
+          <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="viewModalBody" style="padding:20px 24px 24px;"></div>
+  </div>
+</div>
+
+<!-- PRINT AREA (hidden, used for printing) -->
+<div id="printArea"></div>
+
+<div id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+// ── Firebase ──────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyB5CGQsAkuWUuMVWDXeRiTjVwCFHX-8hOM",
+  authDomain: "ak-agency-c4047.firebaseapp.com",
+  projectId: "ak-agency-c4047",
+  storageBucket: "ak-agency-c4047.firebasestorage.app",
+  messagingSenderId: "270275192870",
+  appId: "1:270275192870:web:0a3dd66eddc4094eb85ee7"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+// ── Auth Guard ────────────────────────────────────────────
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = "../index.html"; return; }
+  document.getElementById("userAvatar").textContent = user.email[0].toUpperCase();
+  init();
+});
+function logoutUser() { auth.signOut().then(() => window.location.href = "../index.html"); }
+function openSidebar()  { document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").style.display="block"; }
+function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("sidebarOverlay").style.display="none"; }
+if (window.innerWidth <= 768) document.getElementById("menuBtn").style.display = "block";
+
+// ── State ─────────────────────────────────────────────────
+let allRetailers = [];
+let allProducts  = [];
+let allInvoices  = [];
+let selectedRetailer = null;
+let productRows  = [];
+let rowCounter   = 0;
+
+// ── Init ──────────────────────────────────────────────────
+async function init() {
+  setTodayDates();
+  await Promise.all([loadRetailers(), loadProducts()]);
+  loadInvoices();
+  generateInvoiceNo();
+  addProductRow();
+}
+
+function setTodayDates() {
+  const today = new Date().toISOString().split("T")[0];
+  const due   = new Date(Date.now() + 7*86400000).toISOString().split("T")[0];
+  document.getElementById("invoiceDate").value = today;
+  document.getElementById("dueDate").value     = due;
+}
+
+// ── Generate Invoice Number ───────────────────────────────
+async function generateInvoiceNo() {
+  const snap = await db.collection("invoices").orderBy("createdAt","desc").limit(1).get();
+  let next = 1;
+  if (!snap.empty) {
+    const last = snap.docs[0].data().invoiceNumber || "AK-0000";
+    const num  = parseInt(last.split("-")[1]) || 0;
+    next = num + 1;
+  }
+  document.getElementById("invoiceNo").value = "AK-" + String(next).padStart(4, "0");
+}
+
+// ── Load Retailers ────────────────────────────────────────
+async function loadRetailers() {
+  const snap = await db.collection("retailers").get();
+  allRetailers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// ── Load Products ─────────────────────────────────────────
+async function loadProducts() {
+  const snap = await db.collection("products").get();
+  allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// ── Retailer Search ───────────────────────────────────────
+function searchRetailers() {
+  const q = document.getElementById("retailerSearch").value.toLowerCase();
+  const dd = document.getElementById("retailerDropdown");
+  if (!q) { dd.style.display = "none"; return; }
+  const matches = allRetailers.filter(r =>
+    r.shopName?.toLowerCase().includes(q) || r.ownerName?.toLowerCase().includes(q)
+  ).slice(0, 6);
+  if (!matches.length) { dd.style.display = "none"; return; }
+  dd.innerHTML = matches.map(r => `
+    <div class="autocomplete-item" onclick="selectRetailer('${r.id}')">
+      <div style="font-weight:600;color:#fff;">${r.shopName}</div>
+      <div style="font-size:0.75rem;color:#6B6B6B;">${r.ownerName} · ${r.area||""}</div>
+    </div>`).join("");
+  dd.style.display = "block";
+}
+
+function selectRetailer(id) {
+  selectedRetailer = allRetailers.find(r => r.id === id);
+  if (!selectedRetailer) return;
+  document.getElementById("retailerSearch").value = selectedRetailer.shopName;
+  document.getElementById("retailerDropdown").style.display = "none";
+  document.getElementById("selectedRetailerCard").style.display = "block";
+  document.getElementById("rcShop").textContent   = selectedRetailer.shopName;
+  document.getElementById("rcOwner").textContent  = selectedRetailer.ownerName || "—";
+  document.getElementById("rcArea").textContent   = selectedRetailer.area || "—";
+  document.getElementById("rcPhone").textContent  = selectedRetailer.mobile || "—";
+  document.getElementById("rcCredit").textContent = "₹" + (selectedRetailer.creditBalance || 0).toLocaleString("en-IN");
+}
+
+function clearRetailer() {
+  selectedRetailer = null;
+  document.getElementById("retailerSearch").value = "";
+  document.getElementById("selectedRetailerCard").style.display = "none";
+}
+
+document.addEventListener("click", e => {
+  if (!e.target.closest("#retailerSearch") && !e.target.closest("#retailerDropdown")) {
+    document.getElementById("retailerDropdown").style.display = "none";
+  }
+});
+
+// ── Product Rows ──────────────────────────────────────────
+function addProductRow() {
+  const id = ++rowCounter;
+  productRows.push({ id, productId: "", name: "", qty: 1, price: 0 });
+  renderProductRows();
+}
+
+function removeProductRow(id) {
+  productRows = productRows.filter(r => r.id !== id);
+  renderProductRows();
+  recalculate();
+}
+
+function renderProductRows() {
+  const container = document.getElementById("productRowsContainer");
+  if (!productRows.length) {
+    container.innerHTML = `<div style="text-align:center;color:#4A4A4A;padding:20px;font-size:0.85rem;">No items added yet.</div>`;
+    return;
+  }
+  container.innerHTML = productRows.map(row => `
+    <div class="product-row" id="row-${row.id}">
+      <div style="position:relative;">
+        <input type="text" placeholder="Search product…" value="${row.name}"
+          class="form-input" style="padding:8px 12px;font-size:0.82rem;"
+          id="pSearch-${row.id}" oninput="searchProduct(${row.id})" autocomplete="off" />
+        <div id="pDrop-${row.id}" class="autocomplete-list" style="display:none;"></div>
+      </div>
+      <input type="number" min="1" value="${row.qty}" placeholder="Qty"
+        class="form-input" style="padding:8px 12px;font-size:0.82rem;"
+        id="pQty-${row.id}" oninput="updateRowCalc(${row.id})" />
+      <input type="number" min="0" value="${row.price}" placeholder="Price"
+        class="form-input" style="padding:8px 12px;font-size:0.82rem;"
+        id="pPrice-${row.id}" oninput="updateRowCalc(${row.id})" />
+      <div style="font-weight:700;color:#fff;font-size:0.875rem;padding:0 4px;" id="pTotal-${row.id}">
+        ₹${(row.qty * row.price).toFixed(2)}
+      </div>
+      <button class="btn-icon danger" onclick="removeProductRow(${row.id})">
+        <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  `).join("");
+}
+
+function searchProduct(rowId) {
+  const q   = document.getElementById(`pSearch-${rowId}`).value.toLowerCase();
+  const dd  = document.getElementById(`pDrop-${rowId}`);
+  if (!q) { dd.style.display = "none"; return; }
+  const matches = allProducts.filter(p => p.name?.toLowerCase().includes(q)).slice(0, 6);
+  if (!matches.length) { dd.style.display = "none"; return; }
+  dd.innerHTML = matches.map(p => `
+    <div class="autocomplete-item" onclick="selectProduct(${rowId},'${p.id}')">
+      <div style="font-weight:600;color:#fff;">${p.name}</div>
+      <div style="font-size:0.75rem;color:#6B6B6B;">₹${p.price} · Stock: ${p.stock} ${p.unit||""}</div>
+    </div>`).join("");
+  dd.style.display = "block";
+}
+
+function selectProduct(rowId, productId) {
+  const product = allProducts.find(p => p.id === productId);
+  if (!product) return;
+  const row = productRows.find(r => r.id === rowId);
+  if (row) { row.productId = product.id; row.name = product.name; row.price = product.price || 0; }
+  document.getElementById(`pSearch-${rowId}`).value = product.name;
+  document.getElementById(`pPrice-${rowId}`).value  = product.price || 0;
+  document.getElementById(`pDrop-${rowId}`).style.display = "none";
+  updateRowCalc(rowId);
+}
+
+function updateRowCalc(rowId) {
+  const row = productRows.find(r => r.id === rowId);
+  if (!row) return;
+  row.qty   = parseFloat(document.getElementById(`pQty-${rowId}`)?.value)   || 0;
+  row.price = parseFloat(document.getElementById(`pPrice-${rowId}`)?.value) || 0;
+  const total = row.qty * row.price;
+  const el = document.getElementById(`pTotal-${rowId}`);
+  if (el) el.textContent = "₹" + total.toFixed(2);
+  recalculate();
+}
+
+// ── Recalculate Summary ───────────────────────────────────
+function recalculate() {
+  const subtotal = productRows.reduce((s, r) => s + (r.qty * r.price), 0);
+  const discVal  = parseFloat(document.getElementById("discountVal").value) || 0;
+  const discType = document.getElementById("discountType").value;
+  const gstPct   = parseFloat(document.getElementById("gstPct").value) || 0;
+  const discount = discType === "pct" ? subtotal * discVal / 100 : discVal;
+  const afterDisc = Math.max(subtotal - discount, 0);
+  const gstAmt    = afterDisc * gstPct / 100;
+  const total     = afterDisc + gstAmt;
+
+  document.getElementById("sumSubtotal").textContent = "₹" + subtotal.toFixed(2);
+  document.getElementById("sumGst").textContent      = "₹" + gstAmt.toFixed(2);
+  document.getElementById("sumTotal").textContent    = "₹" + total.toFixed(2);
+
+  // Balance due
+  const paid = parseFloat(document.getElementById("amountPaid")?.value) || 0;
+  const bal  = Math.max(total - paid, 0);
+  const balEl = document.getElementById("balanceDue");
+  if (balEl) balEl.textContent = "₹" + bal.toFixed(2);
+}
+
+function toggleAmountPaid() {
+  const status = document.getElementById("paymentStatus").value;
+  const row    = document.getElementById("amountPaidRow");
+  row.style.display = status === "partial" ? "block" : "none";
+  if (status === "paid") document.getElementById("amountPaid").value = "";
+  recalculate();
+}
+
+// ── Tab switching ─────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.getElementById("tabCreate").style.display = tab === "create" ? "block" : "none";
+  document.getElementById("tabList").style.display   = tab === "list"   ? "block" : "none";
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  if (tab === "list") loadInvoices();
+}
+
+// ── Save Invoice ──────────────────────────────────────────
+async function saveInvoice() {
+  if (!selectedRetailer) { showToast("Please select a retailer first.", "err"); return; }
+  const validRows = productRows.filter(r => r.name && r.qty > 0 && r.price >= 0);
+  if (!validRows.length) { showToast("Add at least one product.", "err"); return; }
+
+  const subtotal   = validRows.reduce((s, r) => s + r.qty * r.price, 0);
+  const discVal    = parseFloat(document.getElementById("discountVal").value) || 0;
+  const discType   = document.getElementById("discountType").value;
+  const gstPct     = parseFloat(document.getElementById("gstPct").value) || 0;
+  const discount   = discType === "pct" ? subtotal * discVal / 100 : discVal;
+  const afterDisc  = Math.max(subtotal - discount, 0);
+  const gstAmt     = afterDisc * gstPct / 100;
+  const total      = afterDisc + gstAmt;
+  const status     = document.getElementById("paymentStatus").value;
+  const amtPaid    = status === "paid" ? total : (parseFloat(document.getElementById("amountPaid").value) || 0);
+  const balance    = Math.max(total - amtPaid, 0);
+
+  const invoice = {
+    invoiceNumber:  document.getElementById("invoiceNo").value,
+    invoiceDate:    document.getElementById("invoiceDate").value,
+    dueDate:        document.getElementById("dueDate").value,
+    retailerId:     selectedRetailer.id,
+    retailerName:   selectedRetailer.shopName,
+    retailerOwner:  selectedRetailer.ownerName || "",
+    retailerArea:   selectedRetailer.area || "",
+    retailerPhone:  selectedRetailer.mobile || "",
+    items:          validRows.map(r => ({ productId: r.productId, name: r.name, qty: r.qty, price: r.price, total: r.qty * r.price })),
+    subtotal, discount, gstPct, gstAmount: gstAmt, total,
+    amountPaid: amtPaid, balance,
+    status,
+    notes:       document.getElementById("invoiceNotes").value,
+    createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  try {
+    document.querySelector("button[onclick='saveInvoice()']").disabled = true;
+    await db.collection("invoices").add(invoice);
+
+    // Update retailer credit balance if pending/partial
+    if (balance > 0) {
+      const newCredit = (selectedRetailer.creditBalance || 0) + balance;
+      await db.collection("retailers").doc(selectedRetailer.id).update({ creditBalance: newCredit });
+    }
+
+    // Decrement stock for each item
+    const batch = db.batch();
+    for (const row of validRows) {
+      if (row.productId) {
+        const product = allProducts.find(p => p.id === row.productId);
+        if (product) {
+          const newStock = Math.max((product.stock || 0) - row.qty, 0);
+          batch.update(db.collection("products").doc(row.productId), { stock: newStock });
+        }
+      }
+    }
+    await batch.commit();
+
+    showToast("Invoice saved successfully!", "success");
+    resetForm();
+    await generateInvoiceNo();
+  } catch(err) {
+    console.error(err);
+    showToast("Failed to save invoice.", "err");
+  } finally {
+    document.querySelector("button[onclick='saveInvoice()']").disabled = false;
+  }
+}
+
+function resetForm() {
+  clearRetailer();
+  productRows = []; rowCounter = 0;
+  addProductRow();
+  document.getElementById("discountVal").value = "0";
+  document.getElementById("gstPct").value = "0";
+  document.getElementById("invoiceNotes").value = "";
+  document.getElementById("paymentStatus").value = "pending";
+  document.getElementById("amountPaidRow").style.display = "none";
+  recalculate();
+  setTodayDates();
+}
+
+// ── Load & Display Invoices ───────────────────────────────
+function loadInvoices() {
+  db.collection("invoices").orderBy("createdAt","desc").limit(100).onSnapshot(snap => {
+    allInvoices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById("invoiceCountLabel").textContent = allInvoices.length + " invoices total";
+    filterInvoices();
+  });
+}
+
+function filterInvoices() {
+  const q      = document.getElementById("invoiceSearch")?.value.toLowerCase() || "";
+  const status = document.getElementById("statusFilter")?.value || "";
+  const filtered = allInvoices.filter(inv => {
+    const matchQ = !q || inv.invoiceNumber?.toLowerCase().includes(q) || inv.retailerName?.toLowerCase().includes(q);
+    const matchS = !status || inv.status === status;
+    return matchQ && matchS;
+  });
+  renderInvoicesTable(filtered);
+}
+
+function renderInvoicesTable(invoices) {
+  const tbody = document.getElementById("invoicesTableBody");
+  if (!invoices.length) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#4A4A4A;padding:40px;">No invoices found.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = invoices.map(inv => {
+    const date = inv.invoiceDate || "—";
+    const statusCls = inv.status === "paid" ? "pill-green" : inv.status === "partial" ? "pill-blue" : "pill-amber";
+    return `<tr>
+      <td style="color:#C8102E;font-weight:700;">${inv.invoiceNumber || "—"}</td>
+      <td><div style="font-weight:500;color:#fff;">${inv.retailerName || "—"}</div><div style="font-size:0.72rem;color:#6B6B6B;">${inv.retailerArea || ""}</div></td>
+      <td style="color:#ccc;">${date}</td>
+      <td style="color:#6B6B6B;">${(inv.items||[]).length} items</td>
+      <td style="font-weight:700;color:#fff;">₹${Number(inv.total||0).toLocaleString("en-IN")}</td>
+      <td style="color:#10B981;">₹${Number(inv.amountPaid||0).toLocaleString("en-IN")}</td>
+      <td style="color:${inv.balance>0?"#FF4D6D":"#10B981"};">₹${Number(inv.balance||0).toLocaleString("en-IN")}</td>
+      <td><span class="pill ${statusCls}">${inv.status||"pending"}</span></td>
+      <td style="text-align:center;">
+        <div style="display:flex;gap:4px;justify-content:center;">
+          <button class="btn-icon" title="View" onclick="viewInvoice('${inv.id}')">
+            <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </button>
+          ${inv.status !== "paid" ? `<button class="btn-icon" title="Mark Paid" onclick="markPaid('${inv.id}',${inv.total||0})">
+            <svg style="width:15px;height:15px;color:#10B981;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </button>` : ""}
+          <button class="btn-icon danger" title="Delete" onclick="deleteInvoice('${inv.id}')">
+            <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+// ── View Invoice ──────────────────────────────────────────
+function viewInvoice(id) {
+  const inv = allInvoices.find(i => i.id === id);
+  if (!inv) return;
+  const statusCls = inv.status === "paid" ? "pill-green" : inv.status === "partial" ? "pill-blue" : "pill-amber";
+  document.getElementById("viewModalBody").innerHTML = `
+    <div style="border-bottom:1px solid #2A2A2A;padding-bottom:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:start;">
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.8rem;color:#C8102E;letter-spacing:0.1em;">AK AGENCY</div>
+        <div style="font-size:0.75rem;color:#6B6B6B;">Masala & FMCG Distribution</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-weight:700;color:#C8102E;font-size:1.1rem;">${inv.invoiceNumber}</div>
+        <div style="font-size:0.8rem;color:#6B6B6B;">Date: ${inv.invoiceDate || "—"}</div>
+        <div style="font-size:0.8rem;color:#6B6B6B;">Due: ${inv.dueDate || "—"}</div>
+        <span class="pill ${statusCls}" style="margin-top:6px;display:inline-block;">${inv.status}</span>
+      </div>
+    </div>
+    <div style="background:#252525;border-radius:8px;padding:12px;margin-bottom:16px;">
+      <div style="font-size:0.72rem;color:#6B6B6B;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;">Bill To</div>
+      <div style="font-weight:700;color:#fff;">${inv.retailerName}</div>
+      <div style="font-size:0.82rem;color:#6B6B6B;">${inv.retailerOwner || ""} · ${inv.retailerArea || ""}</div>
+      <div style="font-size:0.82rem;color:#6B6B6B;">${inv.retailerPhone || ""}</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+      <thead><tr>
+        <th style="text-align:left;font-size:0.68rem;color:#4A4A4A;padding:8px 0;border-bottom:1px solid #2A2A2A;letter-spacing:0.1em;text-transform:uppercase;">Product</th>
+        <th style="text-align:center;font-size:0.68rem;color:#4A4A4A;padding:8px 0;border-bottom:1px solid #2A2A2A;letter-spacing:0.1em;text-transform:uppercase;">Qty</th>
+        <th style="text-align:right;font-size:0.68rem;color:#4A4A4A;padding:8px 0;border-bottom:1px solid #2A2A2A;letter-spacing:0.1em;text-transform:uppercase;">Price</th>
+        <th style="text-align:right;font-size:0.68rem;color:#4A4A4A;padding:8px 0;border-bottom:1px solid #2A2A2A;letter-spacing:0.1em;text-transform:uppercase;">Total</th>
+      </tr></thead>
+      <tbody>${(inv.items||[]).map(item => `
+        <tr>
+          <td style="padding:10px 0;color:#ccc;border-bottom:1px solid #222;">${item.name}</td>
+          <td style="padding:10px 0;text-align:center;color:#6B6B6B;border-bottom:1px solid #222;">${item.qty}</td>
+          <td style="padding:10px 0;text-align:right;color:#ccc;border-bottom:1px solid #222;">₹${Number(item.price).toFixed(2)}</td>
+          <td style="padding:10px 0;text-align:right;font-weight:600;color:#fff;border-bottom:1px solid #222;">₹${Number(item.total).toFixed(2)}</td>
+        </tr>`).join("")}
+      </tbody>
+    </table>
+    <div style="background:#252525;border-radius:8px;padding:12px;">
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.85rem;color:#6B6B6B;"><span>Subtotal</span><span>₹${Number(inv.subtotal||0).toFixed(2)}</span></div>
+      ${inv.discount ? `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.85rem;color:#6B6B6B;"><span>Discount</span><span>-₹${Number(inv.discount||0).toFixed(2)}</span></div>` : ""}
+      ${inv.gstPct ? `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.85rem;color:#6B6B6B;"><span>GST (${inv.gstPct}%)</span><span>₹${Number(inv.gstAmount||0).toFixed(2)}</span></div>` : ""}
+      <div style="display:flex;justify-content:space-between;padding:8px 0 4px;font-weight:700;font-size:1rem;color:#fff;border-top:1px solid #333;margin-top:4px;"><span>Grand Total</span><span style="color:#C8102E;">₹${Number(inv.total||0).toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.85rem;color:#10B981;"><span>Amount Paid</span><span>₹${Number(inv.amountPaid||0).toFixed(2)}</span></div>
+      ${inv.balance > 0 ? `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.85rem;color:#FF4D6D;"><span>Balance Due</span><span>₹${Number(inv.balance||0).toFixed(2)}</span></div>` : ""}
+    </div>
+    ${inv.notes ? `<div style="margin-top:12px;font-size:0.82rem;color:#6B6B6B;"><strong style="color:#ccc;">Notes:</strong> ${inv.notes}</div>` : ""}
+  `;
+  document.getElementById("viewModal").classList.add("open");
+}
+
+document.getElementById("viewModal").addEventListener("click", e => {
+  if (e.target === document.getElementById("viewModal")) document.getElementById("viewModal").classList.remove("open");
+});
+
+// ── Mark Paid ─────────────────────────────────────────────
+async function markPaid(id, total) {
+  try {
+    const inv = allInvoices.find(i => i.id === id);
+    await db.collection("invoices").doc(id).update({ status: "paid", amountPaid: total, balance: 0 });
+    // Reduce credit balance on retailer
+    if (inv && inv.retailerId && inv.balance > 0) {
+      const rDoc = await db.collection("retailers").doc(inv.retailerId).get();
+      if (rDoc.exists) {
+        const newCredit = Math.max((rDoc.data().creditBalance || 0) - inv.balance, 0);
+        await db.collection("retailers").doc(inv.retailerId).update({ creditBalance: newCredit });
+      }
+    }
+    showToast("Invoice marked as paid!", "success");
+  } catch(e) { showToast("Failed to update.", "err"); }
+}
+
+// ── Delete Invoice ────────────────────────────────────────
+async function deleteInvoice(id) {
+  if (!confirm("Delete this invoice? This cannot be undone.")) return;
+  try {
+    await db.collection("invoices").doc(id).delete();
+    showToast("Invoice deleted.", "success");
+  } catch(e) { showToast("Delete failed.", "err"); }
+}
+
+// ── Print Invoice ─────────────────────────────────────────
+function buildPrintHTML(inv) {
+  if (!inv) {
+    // Build from current form state
+    inv = {
+      invoiceNumber: document.getElementById("invoiceNo").value,
+      invoiceDate:   document.getElementById("invoiceDate").value,
+      dueDate:       document.getElementById("dueDate").value,
+      retailerName:  selectedRetailer?.shopName || "—",
+      retailerOwner: selectedRetailer?.ownerName || "",
+      retailerArea:  selectedRetailer?.area || "",
+      retailerPhone: selectedRetailer?.mobile || "",
+      items: productRows.filter(r => r.name).map(r => ({ name: r.name, qty: r.qty, price: r.price, total: r.qty * r.price })),
+      subtotal: productRows.reduce((s,r) => s + r.qty * r.price, 0),
+      gstPct:   parseFloat(document.getElementById("gstPct").value) || 0,
+      gstAmount: parseFloat(document.getElementById("sumGst").textContent.replace("₹","")) || 0,
+      discount: parseFloat(document.getElementById("discountVal").value) || 0,
+      total:    parseFloat(document.getElementById("sumTotal").textContent.replace("₹","")) || 0,
+      status:   document.getElementById("paymentStatus").value,
+      notes:    document.getElementById("invoiceNotes").value,
+    };
+  }
+  return `
+    <div style="max-width:680px;margin:0 auto;font-family:'DM Sans',sans-serif;color:#000;">
+      <div style="display:flex;justify-content:space-between;align-items:start;border-bottom:3px solid #C8102E;padding-bottom:20px;margin-bottom:20px;">
+        <div>
+          <div style="font-size:2rem;font-weight:900;color:#C8102E;letter-spacing:0.05em;">AK AGENCY</div>
+          <div style="font-size:0.85rem;color:#666;">Masala & FMCG Distribution</div>
+          <div style="font-size:0.8rem;color:#666;margin-top:4px;">Chennai, Tamil Nadu</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:1.4rem;font-weight:800;color:#C8102E;">${inv.invoiceNumber}</div>
+          <div style="font-size:0.8rem;color:#666;">Date: ${inv.invoiceDate}</div>
+          <div style="font-size:0.8rem;color:#666;">Due: ${inv.dueDate || "—"}</div>
+        </div>
+      </div>
+      <div style="background:#f9f9f9;border-radius:8px;padding:14px;margin-bottom:20px;">
+        <div style="font-size:0.7rem;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Bill To</div>
+        <div style="font-weight:700;font-size:1rem;">${inv.retailerName}</div>
+        <div style="font-size:0.85rem;color:#555;">${inv.retailerOwner} · ${inv.retailerArea}</div>
+        <div style="font-size:0.85rem;color:#555;">${inv.retailerPhone}</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <thead><tr style="background:#C8102E;color:#fff;">
+          <th style="padding:10px 12px;text-align:left;font-size:0.8rem;">#</th>
+          <th style="padding:10px 12px;text-align:left;font-size:0.8rem;">Product</th>
+          <th style="padding:10px 12px;text-align:center;font-size:0.8rem;">Qty</th>
+          <th style="padding:10px 12px;text-align:right;font-size:0.8rem;">Rate</th>
+          <th style="padding:10px 12px;text-align:right;font-size:0.8rem;">Amount</th>
+        </tr></thead>
+        <tbody>${(inv.items||[]).map((item,i) => `
+          <tr style="background:${i%2===0?"#fff":"#f9f9f9"};">
+            <td style="padding:9px 12px;font-size:0.82rem;color:#555;">${i+1}</td>
+            <td style="padding:9px 12px;font-size:0.82rem;font-weight:500;">${item.name}</td>
+            <td style="padding:9px 12px;font-size:0.82rem;text-align:center;">${item.qty}</td>
+            <td style="padding:9px 12px;font-size:0.82rem;text-align:right;">₹${Number(item.price).toFixed(2)}</td>
+            <td style="padding:9px 12px;font-size:0.82rem;text-align:right;font-weight:600;">₹${Number(item.total).toFixed(2)}</td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+      <div style="display:flex;justify-content:flex-end;">
+        <div style="width:260px;">
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:0.85rem;color:#555;"><span>Subtotal</span><span>₹${Number(inv.subtotal||0).toFixed(2)}</span></div>
+          ${inv.discount ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:0.85rem;color:#555;"><span>Discount</span><span>-₹${Number(inv.discount).toFixed(2)}</span></div>` : ""}
+          ${inv.gstPct ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:0.85rem;color:#555;"><span>GST (${inv.gstPct}%)</span><span>₹${Number(inv.gstAmount||0).toFixed(2)}</span></div>` : ""}
+          <div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:800;font-size:1rem;border-top:2px solid #C8102E;margin-top:4px;color:#C8102E;"><span>Grand Total</span><span>₹${Number(inv.total||0).toFixed(2)}</span></div>
+        </div>
+      </div>
+      ${inv.notes ? `<div style="margin-top:16px;padding:12px;background:#fff8f8;border-left:3px solid #C8102E;font-size:0.82rem;color:#555;"><strong>Notes:</strong> ${inv.notes}</div>` : ""}
+      <div style="margin-top:30px;text-align:center;font-size:0.75rem;color:#aaa;border-top:1px solid #eee;padding-top:12px;">Thank you for your business! — AK Agency</div>
+    </div>`;
+}
+
+function printInvoice() {
+  document.getElementById("printArea").innerHTML = buildPrintHTML(null);
+  window.print();
+}
+function printModalInvoice() {
+  const id = document.getElementById("viewModal").getAttribute("data-invoice-id");
+  const inv = id ? allInvoices.find(i => i.id === id) : null;
+  document.getElementById("printArea").innerHTML = buildPrintHTML(inv);
+  document.getElementById("viewModal").classList.remove("open");
+  setTimeout(() => window.print(), 100);
+}
+
+// ── Download PDF ──────────────────────────────────────────
+function downloadPDF() {
+  if (typeof jspdf === "undefined" && typeof window.jspdf === "undefined") {
+    // Fallback to print if jsPDF not loaded
+    printInvoice(); return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(22); doc.setTextColor(200,16,46);
+  doc.text("AK AGENCY", 14, 20);
+  doc.setFontSize(10); doc.setTextColor(100);
+  doc.setFont("helvetica","normal");
+  doc.text("Masala & FMCG Distribution", 14, 27);
+  const invNo = document.getElementById("invoiceNo").value;
+  doc.setFont("helvetica","bold"); doc.setTextColor(200,16,46);
+  doc.text(invNo, 196, 20, { align:"right" });
+  doc.setFont("helvetica","normal"); doc.setTextColor(100);
+  doc.text("Date: " + document.getElementById("invoiceDate").value, 196, 27, { align:"right" });
+  doc.setDrawColor(200,16,46); doc.setLineWidth(0.5);
+  doc.line(14, 32, 196, 32);
+  if (selectedRetailer) {
+    doc.setFontSize(9); doc.setTextColor(150);
+    doc.text("BILL TO", 14, 40);
+    doc.setFontSize(11); doc.setTextColor(0); doc.setFont("helvetica","bold");
+    doc.text(selectedRetailer.shopName || "", 14, 47);
+    doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(80);
+    doc.text((selectedRetailer.ownerName||"") + " · " + (selectedRetailer.area||""), 14, 53);
+  }
+  let y = 65;
+  doc.setFillColor(200,16,46); doc.rect(14, y, 182, 8, "F");
+  doc.setTextColor(255); doc.setFontSize(9); doc.setFont("helvetica","bold");
+  doc.text("#", 16, y+5.5); doc.text("Product", 24, y+5.5);
+  doc.text("Qty", 130, y+5.5, {align:"right"});
+  doc.text("Rate", 160, y+5.5, {align:"right"});
+  doc.text("Amount", 196, y+5.5, {align:"right"});
+  y += 12;
+  doc.setFont("helvetica","normal"); doc.setTextColor(50);
+  productRows.filter(r => r.name).forEach((row, i) => {
+    if (y > 260) { doc.addPage(); y = 20; }
+    if (i%2===0) { doc.setFillColor(249,249,249); doc.rect(14, y-4, 182, 8, "F"); }
+    doc.text(String(i+1), 16, y+0.5);
+    doc.text(row.name.slice(0,40), 24, y+0.5);
+    doc.text(String(row.qty), 130, y+0.5, {align:"right"});
+    doc.text("₹"+row.price.toFixed(2), 160, y+0.5, {align:"right"});
+    doc.text("₹"+(row.qty*row.price).toFixed(2), 196, y+0.5, {align:"right"});
+    y += 9;
+  });
+  y += 4;
+  doc.setDrawColor(200,16,46); doc.line(130, y, 196, y); y += 6;
+  doc.setFont("helvetica","bold"); doc.setTextColor(200,16,46); doc.setFontSize(11);
+  doc.text("Total: " + document.getElementById("sumTotal").textContent, 196, y, {align:"right"});
+  doc.save(invNo + ".pdf");
+}
+
+// ── Toast ─────────────────────────────────────────────────
+function showToast(msg, type="success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = "show " + type;
+  setTimeout(() => t.className = "", 3000);
+}
+</script>
+</body>
+</html>

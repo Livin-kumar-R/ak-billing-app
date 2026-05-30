@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AK Agency — Admin Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red:     "#C8102E",
+              redDark: "#9B0B22",
+              black:   "#0D0D0D",
+              charcoal:"#1A1A1A",
+              muted:   "#6B6B6B",
+            }
+          },
+          fontFamily: {
+            display: ["Bebas Neue", "sans-serif"],
+            body:    ["DM Sans", "sans-serif"],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "DM Sans", sans-serif; background-color: #0D0D0D; min-height: 100vh; overflow: hidden; }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image: linear-gradient(rgba(200,16,46,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.07) 1px, transparent 1px);
+      background-size: 48px 48px;
+      animation: gridShift 20s linear infinite;
+    }
+    @keyframes gridShift { 0% { background-position: 0 0; } 100% { background-position: 48px 48px; } }
+
+    .glow-orb {
+      position: fixed; width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,16,46,0.22) 0%, transparent 70%);
+      top: -150px; right: -150px; pointer-events: none; z-index: 0;
+      animation: pulse 6s ease-in-out infinite alternate;
+    }
+    @keyframes pulse { from { transform: scale(1); opacity: 0.7; } to { transform: scale(1.1); opacity: 1; } }
+
+    .login-card { animation: cardIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(32px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .ak-input {
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1);
+      color: #F5F5F5; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; outline: none;
+    }
+    .ak-input::placeholder { color: #555; }
+    .ak-input:focus { border-color: #C8102E; background: rgba(200,16,46,0.06); box-shadow: 0 0 0 3px rgba(200,16,46,0.15); }
+    .ak-input.error { border-color: #ff6b6b; box-shadow: 0 0 0 3px rgba(255,107,107,0.15); }
+
+    .ak-btn {
+      background: linear-gradient(135deg, #C8102E, #9B0B22);
+      position: relative; overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .ak-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(200,16,46,0.4); }
+    .ak-btn:active { transform: translateY(0); }
+    .ak-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; animation: spin 0.7s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shake { 10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(4px)} 30%,50%,70%{transform:translateX(-4px)} 40%,60%{transform:translateX(4px)} }
+
+    .eye-btn { color: #555; transition: color 0.2s; background: none; border: none; cursor: pointer; }
+    .eye-btn:hover { color: #C8102E; }
+
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1A1A1A; border: 1px solid rgba(200,16,46,0.4);
+      color: #F5F5F5; padding: 12px 24px; border-radius: 8px;
+      font-size: 0.85rem; z-index: 9999;
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.3s;
+      opacity: 0; min-width: 240px; text-align: center;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #toast.success { border-color: rgba(34,197,94,0.5); }
+    #toast.err { border-color: rgba(200,16,46,0.6); }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen px-4">
+  <div class="bg-grid"></div>
+  <div class="glow-orb"></div>
+
+  <div class="login-card relative z-10 w-full max-w-md">
+    <div class="h-1 w-full rounded-t-2xl" style="background: linear-gradient(90deg, #C8102E, #FF4D6D, #C8102E);"></div>
+
+    <div class="rounded-b-2xl px-8 py-10" style="background:#1A1A1A; border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 32px 80px rgba(0,0,0,0.6);">
+
+      <!-- Brand -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 relative"
+             style="background: rgba(200,16,46,0.15); border: 1.5px solid rgba(200,16,46,0.4);">
+          <span style="font-family:'Bebas Neue'; font-size:2rem; color:#C8102E; line-height:1;">AK</span>
+          <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full animate-ping" style="background:#C8102E; opacity:0.6;"></span>
+          <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full" style="background:#C8102E;"></span>
+        </div>
+        <h1 style="font-family:'Bebas Neue'; font-size:2.5rem; letter-spacing:0.15em; color:#fff; line-height:1;">AK AGENCY</h1>
+        <p style="color:#6B6B6B; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; margin-top:6px;">Masala & FMCG Distribution</p>
+        <div class="flex items-center gap-3 mt-5">
+          <div class="flex-1 h-px" style="background:rgba(255,255,255,0.1);"></div>
+          <span style="color:#6B6B6B; font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase;">ADMIN PORTAL</span>
+          <div class="flex-1 h-px" style="background:rgba(255,255,255,0.1);"></div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="loginForm" novalidate>
+
+        <!-- Email -->
+        <div class="mb-4">
+          <label style="display:block; font-size:0.7rem; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; color:#6B6B6B; margin-bottom:8px;">Email Address</label>
+          <div style="position:relative;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); pointer-events:none;">
+              <svg style="width:16px;height:16px;color:#6B6B6B;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </span>
+            <input id="email" type="email" autocomplete="email" placeholder="admin@akagency.in"
+              class="ak-input" style="width:100%; border-radius:8px; padding:12px 16px 12px 42px; font-size:0.875rem;" />
+          </div>
+          <p id="emailErr" style="font-size:0.75rem; color:#f87171; margin-top:6px; display:none;">Please enter a valid email.</p>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-6">
+          <label style="display:block; font-size:0.7rem; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; color:#6B6B6B; margin-bottom:8px;">Password</label>
+          <div style="position:relative;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); pointer-events:none;">
+              <svg style="width:16px;height:16px;color:#6B6B6B;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </span>
+            <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password"
+              class="ak-input" style="width:100%; border-radius:8px; padding:12px 48px 12px 42px; font-size:0.875rem;" />
+            <button type="button" id="eyeToggle" class="eye-btn" style="position:absolute; right:14px; top:50%; transform:translateY(-50%);">
+              <svg id="eyeIcon" style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+          <p id="passErr" style="font-size:0.75rem; color:#f87171; margin-top:6px; display:none;">Password is required.</p>
+        </div>
+
+        <!-- Button -->
+        <button type="submit" id="loginBtn" class="ak-btn"
+          style="width:100%; border-radius:8px; padding:14px; color:#fff; font-weight:600; font-size:0.875rem; letter-spacing:0.1em; text-transform:uppercase; border:none; cursor:pointer;">
+          <span id="btnText">Sign In</span>
+          <span id="btnSpinner" style="display:none;"><span class="spinner"></span></span>
+        </button>
+      </form>
+
+      <p style="text-align:center; color:#6B6B6B; font-size:0.75rem; margin-top:24px;">Internal use only — AK Agency © 2025</p>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Firebase Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ======================================================
+    // PASTE YOUR FIREBASE CONFIG HERE (replace all values)
+    // ======================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyB5CGQsAkuWUuMVWDXeRiTjVwCFHX-8hOM",
+      authDomain: "ak-agency-c4047.firebaseapp.com",
+      projectId: "ak-agency-c4047",
+      storageBucket: "ak-agency-c4047.firebasestorage.app",
+      messagingSenderId: "270275192870",
+      appId: "1:270275192870:web:0a3dd66eddc4094eb85ee7",
+      measurementId: "G-RR8M2SCLXB"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // If already logged in, go straight to dashboard
+    auth.onAuthStateChanged(user => {
+      if (user) window.location.href = "./pages/dashboard.html";
+    });
+
+    // DOM refs
+    const form       = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passInput  = document.getElementById("password");
+    const emailErr   = document.getElementById("emailErr");
+    const passErr    = document.getElementById("passErr");
+    const loginBtn   = document.getElementById("loginBtn");
+    const btnText    = document.getElementById("btnText");
+    const btnSpinner = document.getElementById("btnSpinner");
+    const toast      = document.getElementById("toast");
+
+    // Eye toggle
+    document.getElementById("eyeToggle").addEventListener("click", () => {
+      passInput.type = passInput.type === "password" ? "text" : "password";
+    });
+
+    // Toast
+    function showToast(msg, type = "err") {
+      toast.textContent = msg;
+      toast.className = "show " + type;
+      setTimeout(() => toast.className = "", 3500);
+    }
+
+    // Validate
+    function validate() {
+      let ok = true;
+      if (!emailInput.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+        emailInput.classList.add("error"); emailErr.style.display = "block"; ok = false;
+      } else {
+        emailInput.classList.remove("error"); emailErr.style.display = "none";
+      }
+      if (!passInput.value.trim()) {
+        passInput.classList.add("error"); passErr.style.display = "block"; ok = false;
+      } else {
+        passInput.classList.remove("error"); passErr.style.display = "none";
+      }
+      return ok;
+    }
+
+    // Loading state
+    function setLoading(on) {
+      loginBtn.disabled = on;
+      btnText.style.display = on ? "none" : "inline";
+      btnSpinner.style.display = on ? "inline" : "none";
+    }
+
+    // Submit
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!validate()) return;
+      setLoading(true);
+
+      try {
+        await auth.signInWithEmailAndPassword(emailInput.value.trim(), passInput.value);
+        showToast("Login successful! Redirecting…", "success");
+        setTimeout(() => window.location.href = "./pages/dashboard.html", 800);
+      } catch (err) {
+        setLoading(false);
+        const card = document.querySelector(".login-card");
+        card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+
+        const msgs = {
+          "auth/user-not-found":         "No account found with this email.",
+          "auth/wrong-password":         "Incorrect password. Try again.",
+          "auth/invalid-email":          "Invalid email format.",
+          "auth/too-many-requests":      "Too many attempts. Please wait.",
+          "auth/invalid-credential":     "Invalid email or password.",
+          "auth/network-request-failed": "Network error. Check your connection.",
+        };
+        showToast(msgs[err.code] || "Login failed: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
