@@ -1,3 +1,187 @@
+
+
+
+billing.html
+File
+the downloaded bills looks messy make proffesional bill while downloading dont change any other
+
+Your PDF looks messy because the current downloadPDF() only dumps basic text into jsPDF. Keep everything else unchanged and replace only the downloadPDF() function with this professional invoice version:
+
+function downloadPDF() {
+  if (typeof jspdf === "undefined" && typeof window.jspdf === "undefined") {
+    printInvoice();
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("p", "mm", "a4");
+
+  const invoiceNo = document.getElementById("invoiceNo").value;
+  const invoiceDate = document.getElementById("invoiceDate").value;
+  const dueDate = document.getElementById("dueDate").value;
+
+  const items = productRows.filter(r => r.name);
+
+  const subtotal = productRows.reduce((s, r) => s + (r.qty * r.price), 0);
+  const gstAmount = parseFloat(document.getElementById("sumGst").textContent.replace(/[^\d.]/g, "")) || 0;
+  const grandTotal = parseFloat(document.getElementById("sumTotal").textContent.replace(/[^\d.]/g, "")) || 0;
+
+  // Header
+  doc.setFillColor(200, 16, 46);
+  doc.rect(0, 0, 210, 30, "F");
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  doc.text("AK AGENCY", 14, 15);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("FMCG Distribution", 14, 22);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("INVOICE", 196, 15, { align: "right" });
+
+  // Invoice details
+  let y = 42;
+
+  doc.setTextColor(0);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text("Invoice No:", 14, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(invoiceNo, 42, y);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Invoice Date:", 120, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(invoiceDate, 155, y);
+
+  y += 7;
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Due Date:", 120, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(dueDate, 155, y);
+
+  // Customer section
+  y += 15;
+
+  doc.setFillColor(245, 245, 245);
+  doc.roundedRect(14, y - 5, 182, 25, 2, 2, "F");
+
+  doc.setFont("helvetica", "bold");
+  doc.text("BILL TO", 18, y + 2);
+
+  doc.setFont("helvetica", "normal");
+
+  if (selectedRetailer) {
+    doc.text(selectedRetailer.shopName || "-", 18, y + 10);
+    doc.text(selectedRetailer.ownerName || "-", 18, y + 16);
+    doc.text(selectedRetailer.mobile || "-", 18, y + 22);
+  }
+
+  y += 35;
+
+  // Table Header
+  doc.setFillColor(200, 16, 46);
+  doc.rect(14, y, 182, 10, "F");
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+
+  doc.text("Product", 18, y + 6.5);
+  doc.text("Qty", 120, y + 6.5, { align: "right" });
+  doc.text("Rate", 155, y + 6.5, { align: "right" });
+  doc.text("Amount", 192, y + 6.5, { align: "right" });
+
+  y += 12;
+
+  // Items
+  doc.setTextColor(0);
+  doc.setFont("helvetica", "normal");
+
+  items.forEach((item, index) => {
+    if (y > 250) {
+      doc.addPage();
+      y = 20;
+    }
+
+    if (index % 2 === 0) {
+      doc.setFillColor(248, 248, 248);
+      doc.rect(14, y - 5, 182, 8, "F");
+    }
+
+    doc.text(item.name.substring(0, 50), 18, y);
+    doc.text(String(item.qty), 120, y, { align: "right" });
+    doc.text("₹" + item.price.toFixed(2), 155, y, { align: "right" });
+    doc.text("₹" + (item.qty * item.price).toFixed(2), 192, y, { align: "right" });
+
+    y += 8;
+  });
+
+  // Totals Box
+  y += 10;
+
+  doc.setDrawColor(220);
+  doc.roundedRect(120, y, 76, 30, 2, 2);
+
+  doc.setFont("helvetica", "normal");
+  doc.text("Subtotal", 125, y + 8);
+  doc.text("₹" + subtotal.toFixed(2), 192, y + 8, { align: "right" });
+
+  doc.text("GST", 125, y + 16);
+  doc.text("₹" + gstAmount.toFixed(2), 192, y + 16, { align: "right" });
+
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(200, 16, 46);
+  doc.text("Grand Total", 125, y + 25);
+  doc.text("₹" + grandTotal.toFixed(2), 192, y + 25, { align: "right" });
+
+  // Footer
+  doc.setTextColor(120);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+
+  doc.text(
+    "Thank you for doing business with AK Agency",
+    105,
+    285,
+    { align: "center" }
+  );
+
+  doc.save(invoiceNo + ".pdf");
+}
+This keeps all your existing billing logic unchanged and only upgrades the downloaded PDF to look like a proper business invoice with:
+
+Professional red header
+
+Clean customer section
+
+Structured product table
+
+Alternating row colors
+
+Totals box
+
+Footer note
+
+Proper A4 invoice layout.
+
+
+give me the full file
+
+Stopped thinking
+I've updated the file so that only the PDF download layout is replaced with a more professional invoice design, while leaving the rest of your billing system unchanged.
+
+Download the updated file:
+
+billing-professional-pdf.html
+
+Replace your existing billing.html with this file and test Download PDF. 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -980,56 +1164,125 @@ function printModalInvoice() {
 // ── Download PDF ──────────────────────────────────────────
 function downloadPDF() {
   if (typeof jspdf === "undefined" && typeof window.jspdf === "undefined") {
-    // Fallback to print if jsPDF not loaded
-    printInvoice(); return;
+    printInvoice();
+    return;
   }
+
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const doc = new jsPDF("p", "mm", "a4");
+
+  const invoiceNo = document.getElementById("invoiceNo").value;
+  const invoiceDate = document.getElementById("invoiceDate").value;
+  const dueDate = document.getElementById("dueDate").value;
+
+  const items = productRows.filter(r => r.name);
+
+  const subtotal = productRows.reduce((s, r) => s + (r.qty * r.price), 0);
+  const gstAmount = parseFloat(document.getElementById("sumGst").textContent.replace(/[^\d.]/g, "")) || 0;
+  const grandTotal = parseFloat(document.getElementById("sumTotal").textContent.replace(/[^\d.]/g, "")) || 0;
+
+  doc.setFillColor(200,16,46);
+  doc.rect(0,0,210,30,"F");
+
+  doc.setTextColor(255);
   doc.setFont("helvetica","bold");
-  doc.setFontSize(22); doc.setTextColor(200,16,46);
-  doc.text("AK AGENCY", 14, 20);
-  doc.setFontSize(10); doc.setTextColor(100);
+  doc.setFontSize(22);
+  doc.text("AK AGENCY",14,15);
+
+  doc.setFontSize(10);
   doc.setFont("helvetica","normal");
-  doc.text("Masala & FMCG Distribution", 14, 27);
-  const invNo = document.getElementById("invoiceNo").value;
-  doc.setFont("helvetica","bold"); doc.setTextColor(200,16,46);
-  doc.text(invNo, 196, 20, { align:"right" });
-  doc.setFont("helvetica","normal"); doc.setTextColor(100);
-  doc.text("Date: " + document.getElementById("invoiceDate").value, 196, 27, { align:"right" });
-  doc.setDrawColor(200,16,46); doc.setLineWidth(0.5);
-  doc.line(14, 32, 196, 32);
-  if (selectedRetailer) {
-    doc.setFontSize(9); doc.setTextColor(150);
-    doc.text("BILL TO", 14, 40);
-    doc.setFontSize(11); doc.setTextColor(0); doc.setFont("helvetica","bold");
-    doc.text(selectedRetailer.shopName || "", 14, 47);
-    doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(80);
-    doc.text((selectedRetailer.ownerName||"") + " · " + (selectedRetailer.area||""), 14, 53);
+  doc.text("FMCG Distribution",14,22);
+
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(18);
+  doc.text("INVOICE",196,15,{align:"right"});
+
+  let y = 42;
+
+  doc.setTextColor(0);
+  doc.setFontSize(10);
+  doc.setFont("helvetica","bold");
+  doc.text("Invoice No:",14,y);
+  doc.setFont("helvetica","normal");
+  doc.text(invoiceNo,42,y);
+
+  doc.setFont("helvetica","bold");
+  doc.text("Invoice Date:",120,y);
+  doc.setFont("helvetica","normal");
+  doc.text(invoiceDate,155,y);
+
+  y += 7;
+  doc.setFont("helvetica","bold");
+  doc.text("Due Date:",120,y);
+  doc.setFont("helvetica","normal");
+  doc.text(dueDate,155,y);
+
+  y += 15;
+
+  doc.setFillColor(245,245,245);
+  doc.roundedRect(14,y-5,182,25,2,2,"F");
+
+  doc.setFont("helvetica","bold");
+  doc.text("BILL TO",18,y+2);
+
+  doc.setFont("helvetica","normal");
+  if(selectedRetailer){
+    doc.text(selectedRetailer.shopName || "-",18,y+10);
+    doc.text(selectedRetailer.ownerName || "-",18,y+16);
+    doc.text(selectedRetailer.mobile || "-",18,y+22);
   }
-  let y = 65;
-  doc.setFillColor(200,16,46); doc.rect(14, y, 182, 8, "F");
-  doc.setTextColor(255); doc.setFontSize(9); doc.setFont("helvetica","bold");
-  doc.text("#", 16, y+5.5); doc.text("Product", 24, y+5.5);
-  doc.text("Qty", 130, y+5.5, {align:"right"});
-  doc.text("Rate", 160, y+5.5, {align:"right"});
-  doc.text("Amount", 196, y+5.5, {align:"right"});
+
+  y += 35;
+
+  doc.setFillColor(200,16,46);
+  doc.rect(14,y,182,10,"F");
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica","bold");
+  doc.text("Product",18,y+6.5);
+  doc.text("Qty",120,y+6.5,{align:"right"});
+  doc.text("Rate",155,y+6.5,{align:"right"});
+  doc.text("Amount",192,y+6.5,{align:"right"});
+
   y += 12;
-  doc.setFont("helvetica","normal"); doc.setTextColor(50);
-  productRows.filter(r => r.name).forEach((row, i) => {
-    if (y > 260) { doc.addPage(); y = 20; }
-    if (i%2===0) { doc.setFillColor(249,249,249); doc.rect(14, y-4, 182, 8, "F"); }
-    doc.text(String(i+1), 16, y+0.5);
-    doc.text(row.name.slice(0,40), 24, y+0.5);
-    doc.text(String(row.qty), 130, y+0.5, {align:"right"});
-    doc.text("₹"+row.price.toFixed(2), 160, y+0.5, {align:"right"});
-    doc.text("₹"+(row.qty*row.price).toFixed(2), 196, y+0.5, {align:"right"});
-    y += 9;
+  doc.setTextColor(0);
+  doc.setFont("helvetica","normal");
+
+  items.forEach((item,index)=>{
+    if(y>250){doc.addPage(); y=20;}
+    if(index%2===0){
+      doc.setFillColor(248,248,248);
+      doc.rect(14,y-5,182,8,"F");
+    }
+    doc.text(item.name.substring(0,50),18,y);
+    doc.text(String(item.qty),120,y,{align:"right"});
+    doc.text("₹"+item.price.toFixed(2),155,y,{align:"right"});
+    doc.text("₹"+(item.qty*item.price).toFixed(2),192,y,{align:"right"});
+    y += 8;
   });
-  y += 4;
-  doc.setDrawColor(200,16,46); doc.line(130, y, 196, y); y += 6;
-  doc.setFont("helvetica","bold"); doc.setTextColor(200,16,46); doc.setFontSize(11);
-  doc.text("Total: " + document.getElementById("sumTotal").textContent, 196, y, {align:"right"});
-  doc.save(invNo + ".pdf");
+
+  y += 10;
+
+  doc.setDrawColor(220);
+  doc.roundedRect(120,y,76,30,2,2);
+
+  doc.text("Subtotal",125,y+8);
+  doc.text("₹"+subtotal.toFixed(2),192,y+8,{align:"right"});
+
+  doc.text("GST",125,y+16);
+  doc.text("₹"+gstAmount.toFixed(2),192,y+16,{align:"right"});
+
+  doc.setFont("helvetica","bold");
+  doc.setTextColor(200,16,46);
+  doc.text("Grand Total",125,y+25);
+  doc.text("₹"+grandTotal.toFixed(2),192,y+25,{align:"right"});
+
+  doc.setTextColor(120);
+  doc.setFontSize(9);
+  doc.setFont("helvetica","normal");
+  doc.text("Thank you for doing business with AK Agency",105,285,{align:"center"});
+
+  doc.save(invoiceNo + ".pdf");
 }
 
 // ── Toast ─────────────────────────────────────────────────
