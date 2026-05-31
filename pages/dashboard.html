@@ -4,40 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AK Agency — Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              red:      "#C8102E",
-              redDark:  "#9B0B22",
-              black:    "#0D0D0D",
-              charcoal: "#1A1A1A",
-              card:     "#202020",
-              border:   "#2A2A2A",
-              muted:    "#6B6B6B",
-              light:    "#F5F5F5",
-            }
-          },
-          fontFamily: {
-            display: ["Bebas Neue", "sans-serif"],
-            body:    ["DM Sans", "sans-serif"],
-          }
-        }
-      }
-    }
-  </script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: "DM Sans", sans-serif; background: #0D0D0D; color: #F5F5F5; min-height: 100vh; display: flex; }
 
-    /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: #1A1A1A; }
     ::-webkit-scrollbar-thumb { background: #C8102E; border-radius: 4px; }
@@ -45,423 +18,329 @@
     /* ── Sidebar ── */
     #sidebar {
       width: 240px; min-height: 100vh;
-      background: #1A1A1A;
-      border-right: 1px solid #2A2A2A;
+      background: #1A1A1A; border-right: 1px solid #2A2A2A;
       display: flex; flex-direction: column;
       position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
       transition: transform 0.3s;
     }
-    .sidebar-logo {
-      padding: 24px 20px 20px;
-      border-bottom: 1px solid #2A2A2A;
-    }
-    .nav-section-label {
-      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: #4A4A4A; padding: 20px 20px 8px; font-weight: 600;
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 11px 20px; margin: 2px 10px; border-radius: 8px;
-      color: #6B6B6B; font-size: 0.875rem; font-weight: 500;
-      cursor: pointer; transition: all 0.2s; text-decoration: none;
-    }
+    .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid #2A2A2A; }
+    .nav-section-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #4A4A4A; padding: 20px 20px 8px; font-weight: 600; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 20px; margin: 2px 10px; border-radius: 8px; color: #6B6B6B; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
     .nav-item:hover { background: rgba(200,16,46,0.08); color: #F5F5F5; }
-    .nav-item.active { background: rgba(200,16,46,0.15); color: #fff; border-left: none; }
+    .nav-item.active { background: rgba(200,16,46,0.15); color: #fff; }
     .nav-item.active svg { color: #C8102E; }
     .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .nav-badge {
-      margin-left: auto; background: #C8102E; color: #fff;
-      font-size: 0.65rem; font-weight: 700; padding: 2px 7px;
-      border-radius: 99px; min-width: 20px; text-align: center;
-    }
-    .sidebar-bottom {
-      margin-top: auto; padding: 16px; border-top: 1px solid #2A2A2A;
-    }
+    .nav-badge { margin-left: auto; background: #C8102E; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 99px; min-width: 20px; text-align: center; }
+    .sidebar-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #2A2A2A; }
 
-    /* ── Main area ── */
+    /* ── Main ── */
     #main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
     /* ── Topbar ── */
-    #topbar {
-      height: 64px; background: #1A1A1A; border-bottom: 1px solid #2A2A2A;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 28px; position: sticky; top: 0; z-index: 50;
-    }
-    .topbar-search {
-      display: flex; align-items: center; gap: 10px;
-      background: rgba(255,255,255,0.04); border: 1px solid #2A2A2A;
-      border-radius: 8px; padding: 8px 14px; width: 260px;
-    }
-    .topbar-search input {
-      background: none; border: none; outline: none;
-      color: #F5F5F5; font-size: 0.85rem; width: 100%;
-    }
+    #topbar { height: 64px; background: #1A1A1A; border-bottom: 1px solid #2A2A2A; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 50; }
+    .topbar-search { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.04); border: 1px solid #2A2A2A; border-radius: 8px; padding: 8px 14px; width: 260px; }
+    .topbar-search input { background: none; border: none; outline: none; color: #F5F5F5; font-size: 0.85rem; width: 100%; }
     .topbar-search input::placeholder { color: #4A4A4A; }
-    .avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: linear-gradient(135deg, #C8102E, #9B0B22);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; font-weight: 700; color: #fff; cursor: pointer;
-    }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #C8102E, #9B0B22); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: #fff; cursor: pointer; flex-shrink: 0; }
 
-    /* ── Page content ── */
-    #content { padding: 28px; flex: 1; overflow-y: auto; }
+    /* ── Content ── */
+    #content { padding: 28px; flex: 1; }
 
     /* ── Stat cards ── */
-    .stat-card {
-      background: #202020; border: 1px solid #2A2A2A; border-radius: 14px;
-      padding: 22px; position: relative; overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+    .stat-card { background: #202020; border: 1px solid #2A2A2A; border-radius: 14px; padding: 20px; position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-    .stat-card::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    }
+    .stat-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
     .stat-card.red::before   { background: linear-gradient(90deg, #C8102E, #FF4D6D); }
     .stat-card.blue::before  { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
     .stat-card.green::before { background: linear-gradient(90deg, #10B981, #34D399); }
     .stat-card.amber::before { background: linear-gradient(90deg, #F59E0B, #FCD34D); }
 
-    .stat-icon {
-      width: 44px; height: 44px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 14px;
-    }
+    /* Mobile stat card — horizontal layout */
+    .stat-card-inner { display: flex; flex-direction: column; gap: 4px; }
+    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; flex-shrink: 0; }
     .stat-icon.red   { background: rgba(200,16,46,0.15); color: #C8102E; }
     .stat-icon.blue  { background: rgba(59,130,246,0.15); color: #3B82F6; }
     .stat-icon.green { background: rgba(16,185,129,0.15); color: #10B981; }
     .stat-icon.amber { background: rgba(245,158,11,0.15); color: #F59E0B; }
-    .stat-icon svg { width: 22px; height: 22px; }
-
-    .stat-value { font-size: 1.75rem; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 4px; }
-    .stat-label { font-size: 0.8rem; color: #6B6B6B; font-weight: 500; }
-    .stat-change {
-      position: absolute; top: 22px; right: 22px;
-      font-size: 0.75rem; font-weight: 600; padding: 3px 8px; border-radius: 99px;
-    }
+    .stat-icon svg { width: 20px; height: 20px; }
+    .stat-value { font-size: 1.6rem; font-weight: 700; color: #fff; line-height: 1; }
+    .stat-label { font-size: 0.78rem; color: #6B6B6B; font-weight: 500; }
+    .stat-change { display: inline-block; margin-top: 6px; font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 99px; width: fit-content; }
     .stat-change.up   { background: rgba(16,185,129,0.15); color: #10B981; }
     .stat-change.down { background: rgba(239,68,68,0.15); color: #EF4444; }
+    .stat-change.neutral { background: rgba(245,158,11,0.15); color: #F59E0B; }
 
     /* ── Section card ── */
-    .section-card {
-      background: #202020; border: 1px solid #2A2A2A; border-radius: 14px; padding: 22px;
-    }
-    .section-title {
-      font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 18px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .section-title span { color: #6B6B6B; font-size: 0.8rem; font-weight: 400; }
+    .section-card { background: #202020; border: 1px solid #2A2A2A; border-radius: 14px; padding: 20px; }
+    .section-title { font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
 
     /* ── Table ── */
     .ak-table { width: 100%; border-collapse: collapse; }
-    .ak-table th {
-      text-align: left; font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase; color: #4A4A4A;
-      padding: 10px 14px; border-bottom: 1px solid #2A2A2A;
-    }
-    .ak-table td { padding: 13px 14px; font-size: 0.85rem; color: #ccc; border-bottom: 1px solid #222; }
+    .ak-table th { text-align: left; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #4A4A4A; padding: 10px 12px; border-bottom: 1px solid #2A2A2A; }
+    .ak-table td { padding: 12px 12px; font-size: 0.83rem; color: #ccc; border-bottom: 1px solid #222; }
     .ak-table tr:last-child td { border-bottom: none; }
     .ak-table tr:hover td { background: rgba(255,255,255,0.02); color: #fff; }
 
-    /* ── Status pill ── */
-    .pill {
-      display: inline-block; padding: 3px 10px; border-radius: 99px;
-      font-size: 0.72rem; font-weight: 600;
-    }
+    /* ── Pills ── */
+    .pill { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 0.7rem; font-weight: 600; }
     .pill-green { background: rgba(16,185,129,0.15); color: #10B981; }
     .pill-red   { background: rgba(200,16,46,0.15);  color: #FF4D6D; }
     .pill-amber { background: rgba(245,158,11,0.15); color: #F59E0B; }
 
-    /* ── Low stock alert ── */
-    .alert-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 0; border-bottom: 1px solid #252525;
-    }
+    /* ── Alert row ── */
+    .alert-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid #252525; }
     .alert-row:last-child { border-bottom: none; }
 
-    /* ── Mobile sidebar overlay ── */
-    #sidebarOverlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6); z-index: 99;
-    }
+    /* ── Sidebar overlay ── */
+    #sidebarOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; }
+
+    /* ── Animations ── */
+    .fade-in { animation: fadeIn 0.5s ease both; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ══════════════ MOBILE ══════════════ */
     @media (max-width: 768px) {
-      #topbar { padding: 0 16px; }
-      #content { padding: 16px; }
-      .topbar-search { display: none; }
-      /* Charts stacked */
+      /* Sidebar slides in */
       #sidebar { transform: translateX(-100%); }
       #sidebar.open { transform: translateX(0); }
       #sidebarOverlay.open { display: block; }
       #main { margin-left: 0; }
-    }
 
-    /* ── Animations ── */
-    .fade-in { animation: fadeIn 0.5s ease both; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-    .fade-in:nth-child(1) { animation-delay: 0.05s; }
-    .fade-in:nth-child(2) { animation-delay: 0.10s; }
-    .fade-in:nth-child(3) { animation-delay: 0.15s; }
-    .fade-in:nth-child(4) { animation-delay: 0.20s; }
-  
-    /* ── Enhanced Mobile ── */
-    @media (max-width: 900px) {
-      .dashboard-charts { grid-template-columns: 1fr !important; }
-      .dashboard-bottom { grid-template-columns: 1fr !important; }
-    }
-    @media (max-width: 768px) {
-      #topbar { padding: 0 16px !important; }
-      #content { padding: 16px !important; }
-      .topbar-search { display: none !important; }
+      /* Topbar */
+      #topbar { padding: 0 16px; height: 56px; }
+      .topbar-search { display: none; }
+      .topbar-user-label { display: none; }
       #todayDate { display: none; }
-      .stat-card { padding: 16px; }
-      .stat-value { font-size: 1.4rem; }
-    }
-    @media (max-width: 480px) {
-      #content { padding: 12px !important; }
+
+      /* Content */
+      #content { padding: 14px 14px 80px; }
+
+      /* Stat cards — 2 column grid on mobile */
+      .stat-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+      .stat-card { padding: 14px; }
+      .stat-icon { width: 34px; height: 34px; border-radius: 8px; margin-bottom: 8px; }
+      .stat-icon svg { width: 16px; height: 16px; }
+      .stat-value { font-size: 1.25rem; }
+      .stat-label { font-size: 0.72rem; }
+
+      /* Page header */
+      .page-header { flex-direction: row; align-items: center; margin-bottom: 14px !important; }
+      .page-header h1 { font-size: 1.5rem !important; }
+      .page-header p { font-size: 0.75rem !important; margin-top: 2px !important; }
+      .new-bill-btn { padding: 8px 14px !important; font-size: 0.8rem !important; }
+      .new-bill-btn span { display: none; }
+
+      /* Charts + alerts: stack */
+      .charts-row { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+      /* Bottom row: stack */
+      .bottom-row { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+      /* Table on mobile — card style */
+      .ak-table thead { display: none; }
+      .ak-table tbody tr { display: block; background: #1C1C1C; border: 1px solid #2A2A2A; border-radius: 10px; margin-bottom: 8px; padding: 12px; }
+      .ak-table tbody td { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border: none; font-size: 0.8rem; }
+      .ak-table tbody td::before { content: attr(data-label); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #4A4A4A; flex-shrink: 0; margin-right: 8px; }
+
+      /* Bottom nav space */
+      #mobileBottomNav { display: block !important; }
     }
 
+    @media (max-width: 400px) {
+      .stat-grid { grid-template-columns: 1fr 1fr !important; }
+      .stat-value { font-size: 1.1rem; }
+    }
+
+    /* Mobile bottom nav */
+    #mobileBottomNav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: #1A1A1A; border-top: 1px solid #2A2A2A;
+      z-index: 150; padding: 6px 0 env(safe-area-inset-bottom, 6px);
+    }
+    .mob-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; text-decoration: none; color: #6B6B6B; font-size: 0.6rem; font-weight: 600; padding: 4px 6px; border-radius: 8px; transition: color 0.2s; flex: 1; }
+    .mob-nav-item.active { color: #C8102E; }
+    .mob-nav-item svg { width: 20px; height: 20px; }
   </style>
 </head>
 
 <body>
-<!-- ══════════════ SIDEBAR ══════════════ -->
-<div id="sidebarOverlay" onclick="closeSidebar()"></div>
-<aside id="sidebar">
 
-  <!-- Logo -->
+<!-- Sidebar overlay -->
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<aside id="sidebar">
   <div class="sidebar-logo">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-           style="background:rgba(200,16,46,0.2); border:1px solid rgba(200,16,46,0.4);">
-        <span style="font-family:'Bebas Neue'; font-size:1.1rem; color:#C8102E;">AK</span>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:8px;background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-family:'Bebas Neue';font-size:1.1rem;color:#C8102E;">AK</span>
       </div>
       <div>
-        <div style="font-family:'Bebas Neue'; font-size:1.1rem; letter-spacing:0.1em; color:#fff; line-height:1;">AK AGENCY</div>
-        <div style="font-size:0.65rem; color:#4A4A4A; letter-spacing:0.1em;">FMCG Distribution</div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:0.1em;color:#fff;line-height:1;">AK AGENCY</div>
+        <div style="font-size:0.65rem;color:#4A4A4A;">FMCG Distribution</div>
       </div>
     </div>
   </div>
-
-  <!-- Nav -->
-  <nav style="flex:1; overflow-y:auto; padding-bottom:8px;">
+  <nav style="flex:1;overflow-y:auto;padding-bottom:8px;">
     <div class="nav-section-label">Main</div>
-
     <a href="dashboard.html" class="nav-item active">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
       Dashboard
     </a>
-
     <a href="billing.html" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-      </svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
       Billing
       <span class="nav-badge" id="pendingBillsBadge">0</span>
     </a>
-
     <div class="nav-section-label">Management</div>
-
     <a href="products.html" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-      </svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
       Products
     </a>
-
     <a href="retailers.html" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-      </svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       Retailers
     </a>
-
     <a href="stock.html" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-      </svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
       Stock
     </a>
-
     <a href="credits.html" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-      </svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
       Credits
     </a>
-
     <div class="nav-section-label">Analytics</div>
-
     <a href="reports.html" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-      </svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
       Reports
     </a>
   </nav>
-
-  <!-- Logout -->
   <div class="sidebar-bottom">
-    <button onclick="logoutUser()" class="nav-item" style="width:100%; border:none; background:none; text-align:left;">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="width:18px;height:18px;">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-      </svg>
+    <button onclick="logoutUser()" class="nav-item" style="width:100%;border:none;background:none;text-align:left;">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
       Logout
     </button>
   </div>
 </aside>
 
-<!-- ══════════════ MAIN ══════════════ -->
+<!-- ── MAIN ── -->
 <div id="main">
 
   <!-- Topbar -->
   <header id="topbar">
-    <div class="flex items-center gap-4">
-      <!-- Mobile menu button -->
-      <button onclick="openSidebar()" style="display:none;" id="menuBtn"
-        class="p-2 rounded-lg hover:bg-white/5">
-        <svg style="width:20px;height:20px;color:#ccc;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button onclick="openSidebar()" id="menuBtn" style="display:none;padding:8px;border-radius:8px;background:none;border:none;cursor:pointer;">
+        <svg style="width:20px;height:20px;color:#ccc;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
-
-      <!-- Search -->
       <div class="topbar-search">
-        <svg style="width:15px;height:15px;color:#4A4A4A;flex-shrink:0;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
+        <svg style="width:15px;height:15px;color:#4A4A4A;flex-shrink:0;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input type="text" placeholder="Search anything…" />
       </div>
     </div>
-
-    <div class="flex items-center gap-4">
-      <!-- Date -->
-      <span id="todayDate" style="font-size:0.8rem; color:#6B6B6B;"></span>
-
-      <!-- Notification bell -->
-      <div style="position:relative; cursor:pointer;">
-        <svg style="width:20px;height:20px;color:#6B6B6B;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-        </svg>
-        <span id="alertDot" style="display:none; position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:#C8102E; border-radius:50%; border:2px solid #1A1A1A;"></span>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span id="todayDate" style="font-size:0.8rem;color:#6B6B6B;"></span>
+      <div style="position:relative;cursor:pointer;">
+        <svg style="width:20px;height:20px;color:#6B6B6B;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span id="alertDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#C8102E;border-radius:50%;border:2px solid #1A1A1A;"></span>
       </div>
-
-      <!-- User -->
-      <div class="flex items-center gap-2">
+      <div style="display:flex;align-items:center;gap:8px;">
         <div class="avatar" id="userAvatar">A</div>
-        <div style="display:flex;flex-direction:column;">
-          <span style="font-size:0.8rem; font-weight:600; color:#fff;" id="userEmail">Admin</span>
-          <span style="font-size:0.68rem; color:#4A4A4A;">Administrator</span>
+        <div class="topbar-user-label" style="display:flex;flex-direction:column;">
+          <span style="font-size:0.8rem;font-weight:600;color:#fff;" id="userEmail">Admin</span>
+          <span style="font-size:0.68rem;color:#4A4A4A;">Administrator</span>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- ══ PAGE CONTENT ══ -->
+  <!-- ── CONTENT ── -->
   <main id="content">
 
     <!-- Page header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;">
       <div>
-        <h1 style="font-family:'Bebas Neue'; font-size:1.8rem; letter-spacing:0.08em; color:#fff; line-height:1;">Dashboard</h1>
-        <p style="font-size:0.82rem; color:#6B6B6B; margin-top:4px;">Welcome back! Here's what's happening today.</p>
+        <h1 style="font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:0.08em;color:#fff;line-height:1;">Dashboard</h1>
+        <p style="font-size:0.82rem;color:#6B6B6B;margin-top:4px;">Welcome back! Here's today's snapshot.</p>
       </div>
-      <button onclick="window.location.href='billing.html'"
-        style="background:linear-gradient(135deg,#C8102E,#9B0B22); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-size:0.85rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;">
-        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-        </svg>
-        New Bill
+      <button class="new-bill-btn" onclick="window.location.href='billing.html'"
+        style="background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;flex-shrink:0;">
+        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        <span>New Bill</span>
       </button>
     </div>
 
     <!-- ── STAT CARDS ── -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:24px;">
+    <div class="stat-grid fade-in" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
 
-      <div class="stat-card red fade-in">
+      <div class="stat-card red">
         <div class="stat-icon red">
-          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div class="stat-value" id="totalSales">₹0</div>
-        <div class="stat-label">Total Sales (Month)</div>
+        <div class="stat-label">Sales (This Month)</div>
         <div class="stat-change up" id="salesChange">+0%</div>
       </div>
 
-      <div class="stat-card amber fade-in">
+      <div class="stat-card amber">
         <div class="stat-icon amber">
-          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div class="stat-value" id="pendingPayments">₹0</div>
         <div class="stat-label">Pending Payments</div>
-        <div class="stat-change down" id="pendingChange">0 dues</div>
+        <div class="stat-change neutral" id="pendingChange">0 dues</div>
       </div>
 
-      <div class="stat-card blue fade-in">
+      <div class="stat-card blue">
         <div class="stat-icon blue">
-          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         </div>
         <div class="stat-value" id="totalRetailers">0</div>
         <div class="stat-label">Total Retailers</div>
         <div class="stat-change up" id="retailersChange">Active</div>
       </div>
 
-      <div class="stat-card green fade-in">
+      <div class="stat-card green">
         <div class="stat-icon green">
-          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-          </svg>
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
         </div>
         <div class="stat-value" id="totalProducts">0</div>
         <div class="stat-label">Products in Stock</div>
-        <div class="stat-change" id="lowStockChange" style="background:rgba(245,158,11,0.15);color:#F59E0B;">0 low</div>
+        <div class="stat-change neutral" id="lowStockChange">0 low</div>
       </div>
-
     </div>
 
-    <!-- ── CHARTS + RECENT ── -->
-    <div class="dashboard-charts" style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px;">
+    <!-- ── CHARTS ROW ── -->
+    <div class="charts-row" style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px;">
 
-      <!-- Sales Chart -->
       <div class="section-card">
         <div class="section-title">
           Weekly Sales Overview
-          <span id="chartWeekLabel"></span>
+          <span style="color:#6B6B6B;font-size:0.78rem;">Last 7 days</span>
         </div>
-        <canvas id="salesChart" height="100"></canvas>
+        <canvas id="salesChart" height="110"></canvas>
       </div>
 
-      <!-- Low Stock Alerts -->
       <div class="section-card">
         <div class="section-title">
           Low Stock Alerts
-          <span id="lowStockCount" style="background:rgba(200,16,46,0.15);color:#FF4D6D;font-size:0.72rem;padding:2px 8px;border-radius:99px;font-weight:600;">0</span>
+          <span id="lowStockCount" style="background:rgba(200,16,46,0.15);color:#FF4D6D;font-size:0.7rem;padding:2px 8px;border-radius:99px;font-weight:600;">0</span>
         </div>
         <div id="lowStockList">
-          <div style="text-align:center; color:#4A4A4A; font-size:0.85rem; padding:24px 0;">
-            <svg style="width:32px;height:32px;margin:0 auto 8px;display:block;opacity:0.3;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            All stock levels OK
+          <div style="text-align:center;color:#4A4A4A;font-size:0.82rem;padding:20px 0;">
+            <svg style="width:28px;height:28px;margin:0 auto 6px;display:block;opacity:0.3;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            All stock OK
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── RECENT INVOICES + TOP RETAILERS ── -->
-    <div class="dashboard-bottom" style="display:grid; grid-template-columns:3fr 2fr; gap:16px;">
+    <!-- ── BOTTOM ROW ── -->
+    <div class="bottom-row" style="display:grid;grid-template-columns:3fr 2fr;gap:14px;">
 
-      <!-- Recent Invoices -->
       <div class="section-card">
         <div class="section-title">
           Recent Invoices
-          <a href="billing.html" style="color:#C8102E; font-size:0.8rem; text-decoration:none; font-weight:500;">View all →</a>
+          <a href="billing.html" style="color:#C8102E;font-size:0.78rem;text-decoration:none;font-weight:500;">View all →</a>
         </div>
         <div style="overflow-x:auto;">
           <table class="ak-table">
@@ -475,29 +354,51 @@
               </tr>
             </thead>
             <tbody id="recentInvoicesBody">
-              <tr>
-                <td colspan="5" style="text-align:center; color:#4A4A4A; padding:24px;">No invoices yet</td>
-              </tr>
+              <tr><td colspan="5" style="text-align:center;color:#4A4A4A;padding:24px;">No invoices yet</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Top Retailers -->
       <div class="section-card">
         <div class="section-title">
           Top Retailers
-          <a href="retailers.html" style="color:#C8102E; font-size:0.8rem; text-decoration:none; font-weight:500;">View all →</a>
+          <a href="retailers.html" style="color:#C8102E;font-size:0.78rem;text-decoration:none;font-weight:500;">View all →</a>
         </div>
         <div id="topRetailersList">
-          <div style="text-align:center; color:#4A4A4A; font-size:0.85rem; padding:24px 0;">No retailer data yet</div>
+          <div style="text-align:center;color:#4A4A4A;font-size:0.82rem;padding:20px 0;">No data yet</div>
         </div>
       </div>
-
     </div>
 
   </main>
 </div>
+
+<!-- ── MOBILE BOTTOM NAV ── -->
+<nav id="mobileBottomNav">
+  <div style="display:flex;justify-content:space-around;align-items:center;">
+    <a href="dashboard.html" class="mob-nav-item active">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Home
+    </a>
+    <a href="billing.html" class="mob-nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Billing
+    </a>
+    <a href="retailers.html" class="mob-nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Retailers
+    </a>
+    <a href="credits.html" class="mob-nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Credits
+    </a>
+    <a href="reports.html" class="mob-nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </a>
+  </div>
+</nav>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -505,7 +406,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // ── Firebase Config ──────────────────────────────────────
   const firebaseConfig = {
     apiKey: "AIzaSyB5CGQsAkuWUuMVWDXeRiTjVwCFHX-8hOM",
     authDomain: "ak-agency-c4047.firebaseapp.com",
@@ -520,45 +420,39 @@
   const auth = firebase.auth();
   const db   = firebase.firestore();
 
-  // ── Auth Guard ───────────────────────────────────────────
+  // Auth guard
   auth.onAuthStateChanged(user => {
-    if (!user) {
-      window.location.href = "../index.html";
-    } else {
-      const email = user.email || "Admin";
-      document.getElementById("userEmail").textContent = email.split("@")[0];
-      document.getElementById("userAvatar").textContent = email[0].toUpperCase();
-      loadDashboard();
-    }
+    if (!user) { window.location.href = "../index.html"; return; }
+    const email = user.email || "Admin";
+    document.getElementById("userEmail").textContent = email.split("@")[0];
+    document.getElementById("userAvatar").textContent = email[0].toUpperCase();
+    loadDashboard();
   });
 
-  // ── Logout ───────────────────────────────────────────────
-  function logoutUser() {
-    auth.signOut().then(() => window.location.href = "../index.html");
-  }
+  function logoutUser() { auth.signOut().then(() => window.location.href = "../index.html"); }
 
-  // ── Mobile sidebar ───────────────────────────────────────
+  // Mobile sidebar
   function openSidebar()  { document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").classList.add("open"); }
   function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("sidebarOverlay").classList.remove("open"); }
 
-  // Show menu button on mobile
-  if (window.innerWidth <= 768) document.getElementById("menuBtn").style.display = "block";
-  window.addEventListener("resize", () => {
-    document.getElementById("menuBtn").style.display = window.innerWidth <= 768 ? "block" : "none";
-  });
+  // Show menu btn on mobile
+  function checkMobile() {
+    const isMobile = window.innerWidth <= 768;
+    document.getElementById("menuBtn").style.display = isMobile ? "block" : "none";
+  }
+  checkMobile();
+  window.addEventListener("resize", checkMobile);
 
-  // ── Date ─────────────────────────────────────────────────
+  // Date
   const now = new Date();
   document.getElementById("todayDate").textContent = now.toLocaleDateString("en-IN", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
 
-  // ── Chart week label ─────────────────────────────────────
-  const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  const today = now.getDay();
+  // Build week labels
+  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   const weekDays = [];
-  for (let i = 6; i >= 0; i--) weekDays.push(days[(today - i + 7) % 7]);
-  document.getElementById("chartWeekLabel").textContent = "Last 7 days";
+  for (let i = 6; i >= 0; i--) weekDays.push(dayNames[(now.getDay() - i + 7) % 7]);
 
-  // ── Sales Chart (placeholder — fills with real data later) ──
+  // Sales chart
   const salesCtx = document.getElementById("salesChart").getContext("2d");
   const salesChart = new Chart(salesCtx, {
     type: "bar",
@@ -570,61 +464,51 @@
         backgroundColor: "rgba(200,16,46,0.25)",
         borderColor: "#C8102E",
         borderWidth: 2,
-        borderRadius: 6,
+        borderRadius: 5,
         borderSkipped: false,
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: true,
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: "#1A1A1A",
-          borderColor: "#2A2A2A",
-          borderWidth: 1,
-          titleColor: "#fff",
-          bodyColor: "#ccc",
+          backgroundColor: "#1A1A1A", borderColor: "#2A2A2A", borderWidth: 1,
+          titleColor: "#fff", bodyColor: "#ccc",
           callbacks: { label: ctx => " ₹" + ctx.parsed.y.toLocaleString("en-IN") }
         }
       },
       scales: {
-        x: { grid: { color: "#222" }, ticks: { color: "#6B6B6B", font: { size: 11 } } },
-        y: { grid: { color: "#222" }, ticks: { color: "#6B6B6B", font: { size: 11 }, callback: v => "₹" + v } }
+        x: { grid: { color: "#1E1E1E" }, ticks: { color: "#6B6B6B", font: { size: 10 } } },
+        y: { grid: { color: "#1E1E1E" }, ticks: { color: "#6B6B6B", font: { size: 10 }, callback: v => v >= 1000 ? "₹"+(v/1000)+"k" : "₹"+v } }
       }
     }
   });
 
-  // ── Format currency ──────────────────────────────────────
-  function formatINR(n) {
-    return "₹" + Number(n || 0).toLocaleString("en-IN");
-  }
+  function formatINR(n) { return "₹" + Number(n || 0).toLocaleString("en-IN"); }
 
-  // ── Load Dashboard Data ──────────────────────────────────
   async function loadDashboard() {
     try {
-      // Count retailers
-      const retailersSnap = await db.collection("retailers").get();
-      document.getElementById("totalRetailers").textContent = retailersSnap.size;
+      const [retailersSnap, productsSnap, invoicesSnap] = await Promise.all([
+        db.collection("retailers").get(),
+        db.collection("products").get(),
+        db.collection("invoices").orderBy("createdAt", "desc").limit(50).get()
+      ]);
 
-      // Count products & low stock
-      const productsSnap = await db.collection("products").get();
+      document.getElementById("totalRetailers").textContent = retailersSnap.size;
       document.getElementById("totalProducts").textContent = productsSnap.size;
-      let lowStockItems = [];
+
+      // Low stock
+      const lowStockItems = [];
       productsSnap.forEach(doc => {
         const d = doc.data();
-        if ((d.stock || 0) <= (d.lowStockAlert || 10)) {
-          lowStockItems.push({ name: d.name, stock: d.stock || 0, unit: d.unit || "pcs" });
-        }
+        if ((d.stock || 0) <= (d.lowStockAlert || 10)) lowStockItems.push({ name: d.name, stock: d.stock || 0, unit: d.unit || "pcs" });
       });
       renderLowStock(lowStockItems);
 
-      // Monthly sales from invoices
+      // Invoice stats
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const invoicesSnap = await db.collection("invoices")
-        .orderBy("createdAt", "desc")
-        .limit(50)
-        .get();
-
       let monthTotal = 0, pendingTotal = 0, pendingCount = 0;
       const recentInvoices = [];
       const weekSales = [0,0,0,0,0,0,0];
@@ -633,64 +517,43 @@
       invoicesSnap.forEach(doc => {
         const d = doc.data();
         const invoiceDate = d.createdAt?.toDate?.() || new Date();
-
         if (invoiceDate >= startOfMonth) monthTotal += (d.total || 0);
         if (d.status === "pending") { pendingTotal += (d.total || 0); pendingCount++; }
-
-        // Weekly chart
         const diffDays = Math.floor((now - invoiceDate) / 86400000);
         if (diffDays < 7) weekSales[6 - diffDays] += (d.total || 0);
-
-        // Top retailers
-        if (d.retailerName) {
-          retailerSales[d.retailerName] = (retailerSales[d.retailerName] || 0) + (d.total || 0);
-        }
-
-        if (recentInvoices.length < 6) {
-          recentInvoices.push({ id: doc.id, ...d, invoiceDate });
-        }
+        if (d.retailerName) retailerSales[d.retailerName] = (retailerSales[d.retailerName] || 0) + (d.total || 0);
+        if (recentInvoices.length < 6) recentInvoices.push({ id: doc.id, ...d, invoiceDate });
       });
 
-      // Pending bills badge
       document.getElementById("pendingBillsBadge").textContent = pendingCount;
       if (pendingCount > 0) document.getElementById("alertDot").style.display = "block";
-
-      // Update stat cards
       document.getElementById("totalSales").textContent = formatINR(monthTotal);
       document.getElementById("pendingPayments").textContent = formatINR(pendingTotal);
       document.getElementById("pendingChange").textContent = pendingCount + " dues";
 
-      // Update chart
       salesChart.data.datasets[0].data = weekSales;
       salesChart.update();
 
-      // Recent invoices table
       renderRecentInvoices(recentInvoices);
-
-      // Top retailers
       renderTopRetailers(retailerSales);
-
     } catch (err) {
-      console.error("Dashboard load error:", err);
+      console.error("Dashboard error:", err);
     }
   }
 
-  // ── Render Recent Invoices ───────────────────────────────
   function renderRecentInvoices(invoices) {
     const tbody = document.getElementById("recentInvoicesBody");
     if (!invoices.length) return;
     tbody.innerHTML = invoices.map(inv => `
       <tr style="cursor:pointer;" onclick="window.location.href='billing.html'">
-        <td style="color:#C8102E; font-weight:600;">#${inv.invoiceNumber || inv.id.slice(-4).toUpperCase()}</td>
-        <td>${inv.retailerName || "—"}</td>
-        <td style="font-weight:600; color:#fff;">${formatINR(inv.total)}</td>
-        <td>${inv.invoiceDate?.toLocaleDateString?.("en-IN") || "—"}</td>
-        <td><span class="pill ${inv.status === 'paid' ? 'pill-green' : inv.status === 'pending' ? 'pill-amber' : 'pill-red'}">${inv.status || "pending"}</span></td>
-      </tr>
-    `).join("");
+        <td data-label="Invoice #" style="color:#C8102E;font-weight:600;">#${inv.invoiceNumber || inv.id.slice(-4).toUpperCase()}</td>
+        <td data-label="Retailer">${inv.retailerName || "—"}</td>
+        <td data-label="Amount" style="font-weight:600;color:#fff;">${formatINR(inv.total)}</td>
+        <td data-label="Date">${inv.invoiceDate?.toLocaleDateString?.("en-IN") || "—"}</td>
+        <td data-label="Status"><span class="pill ${inv.status === 'paid' ? 'pill-green' : inv.status === 'pending' ? 'pill-amber' : 'pill-red'}">${inv.status || "pending"}</span></td>
+      </tr>`).join("");
   }
 
-  // ── Render Low Stock ─────────────────────────────────────
   function renderLowStock(items) {
     document.getElementById("lowStockCount").textContent = items.length;
     const list = document.getElementById("lowStockList");
@@ -698,86 +561,29 @@
     list.innerHTML = items.slice(0, 5).map(item => `
       <div class="alert-row">
         <div>
-          <div style="font-size:0.85rem; font-weight:500; color:#fff;">${item.name}</div>
-          <div style="font-size:0.75rem; color:#6B6B6B;">${item.stock} ${item.unit} remaining</div>
+          <div style="font-size:0.83rem;font-weight:500;color:#fff;">${item.name}</div>
+          <div style="font-size:0.73rem;color:#6B6B6B;">${item.stock} ${item.unit} left</div>
         </div>
         <span class="pill pill-red">Low</span>
-      </div>
-    `).join("");
+      </div>`).join("");
   }
 
-  // ── Render Top Retailers ─────────────────────────────────
   function renderTopRetailers(retailerSales) {
     const sorted = Object.entries(retailerSales).sort((a,b) => b[1]-a[1]).slice(0,5);
     const list = document.getElementById("topRetailersList");
     if (!sorted.length) return;
     const max = sorted[0][1] || 1;
-    list.innerHTML = sorted.map(([name, total], i) => `
-      <div style="margin-bottom:14px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-          <span style="font-size:0.85rem; color:#ccc; font-weight:500;">${name}</span>
-          <span style="font-size:0.82rem; color:#fff; font-weight:600;">${formatINR(total)}</span>
+    list.innerHTML = sorted.map(([name, total]) => `
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+          <span style="font-size:0.83rem;color:#ccc;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%;">${name}</span>
+          <span style="font-size:0.8rem;color:#fff;font-weight:600;flex-shrink:0;">${formatINR(total)}</span>
         </div>
-        <div style="background:#2A2A2A; border-radius:99px; height:4px;">
-          <div style="background:linear-gradient(90deg,#C8102E,#FF4D6D); width:${(total/max*100).toFixed(0)}%; height:4px; border-radius:99px; transition:width 1s;"></div>
+        <div style="background:#2A2A2A;border-radius:99px;height:4px;">
+          <div style="background:linear-gradient(90deg,#C8102E,#FF4D6D);width:${(total/max*100).toFixed(0)}%;height:4px;border-radius:99px;transition:width 1s;"></div>
         </div>
-      </div>
-    `).join("");
+      </div>`).join("");
   }
 </script>
-
-<!-- Mobile Bottom Nav -->
-<nav id="mobileBottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1A1A1A;border-top:1px solid #2A2A2A;z-index:150;padding:8px 0 env(safe-area-inset-bottom,8px);">
-  <div style="display:flex;justify-content:space-around;align-items:center;">
-    <a href="dashboard.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav active">
-      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      Home
-    </a>
-    <a href="billing.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
-      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-      Billing
-    </a>
-    <a href="retailers.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
-      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-      Retailers
-    </a>
-    <a href="credits.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
-      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-      Credits
-    </a>
-    <a href="reports.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
-      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-      Reports
-    </a>
-  </div>
-</nav>
-<style>
-  @media(max-width:768px){
-    #mobileBottomNav { display: block !important; }
-    #main { padding-bottom: 64px; }
-    .mob-nav.active { color: #C8102E !important; }
-  }
-</style>
-
-<script>
-// Auto-add data-label to table cells based on thead for mobile card view
-function autoLabelTables() {
-  document.querySelectorAll('.ak-table').forEach(table => {
-    const headers = [...table.querySelectorAll('thead th')].map(th => th.textContent.trim());
-    table.querySelectorAll('tbody tr').forEach(tr => {
-      [...tr.querySelectorAll('td')].forEach((td, i) => {
-        if (headers[i] && !td.getAttribute('data-label')) {
-          td.setAttribute('data-label', headers[i]);
-        }
-      });
-    });
-  });
-}
-// Run after content loads (observe DOM mutations)
-const tableObserver = new MutationObserver(autoLabelTables);
-tableObserver.observe(document.body, { childList: true, subtree: true });
-autoLabelTables();
-</script>
-
 </body>
 </html>
