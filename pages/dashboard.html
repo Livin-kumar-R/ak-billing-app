@@ -185,6 +185,10 @@
       background: rgba(0,0,0,0.6); z-index: 99;
     }
     @media (max-width: 768px) {
+      #topbar { padding: 0 16px; }
+      #content { padding: 16px; }
+      .topbar-search { display: none; }
+      /* Charts stacked */
       #sidebar { transform: translateX(-100%); }
       #sidebar.open { transform: translateX(0); }
       #sidebarOverlay.open { display: block; }
@@ -198,6 +202,24 @@
     .fade-in:nth-child(2) { animation-delay: 0.10s; }
     .fade-in:nth-child(3) { animation-delay: 0.15s; }
     .fade-in:nth-child(4) { animation-delay: 0.20s; }
+  
+    /* ── Enhanced Mobile ── */
+    @media (max-width: 900px) {
+      .dashboard-charts { grid-template-columns: 1fr !important; }
+      .dashboard-bottom { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 768px) {
+      #topbar { padding: 0 16px !important; }
+      #content { padding: 16px !important; }
+      .topbar-search { display: none !important; }
+      #todayDate { display: none; }
+      .stat-card { padding: 16px; }
+      .stat-value { font-size: 1.4rem; }
+    }
+    @media (max-width: 480px) {
+      #content { padding: 12px !important; }
+    }
+
   </style>
 </head>
 
@@ -404,7 +426,7 @@
     </div>
 
     <!-- ── CHARTS + RECENT ── -->
-    <div style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px;">
+    <div class="dashboard-charts" style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px;">
 
       <!-- Sales Chart -->
       <div class="section-card">
@@ -433,7 +455,7 @@
     </div>
 
     <!-- ── RECENT INVOICES + TOP RETAILERS ── -->
-    <div style="display:grid; grid-template-columns:3fr 2fr; gap:16px;">
+    <div class="dashboard-bottom" style="display:grid; grid-template-columns:3fr 2fr; gap:16px;">
 
       <!-- Recent Invoices -->
       <div class="section-card">
@@ -703,5 +725,59 @@
     `).join("");
   }
 </script>
+
+<!-- Mobile Bottom Nav -->
+<nav id="mobileBottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1A1A1A;border-top:1px solid #2A2A2A;z-index:150;padding:8px 0 env(safe-area-inset-bottom,8px);">
+  <div style="display:flex;justify-content:space-around;align-items:center;">
+    <a href="dashboard.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav active">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Home
+    </a>
+    <a href="billing.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Billing
+    </a>
+    <a href="retailers.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Retailers
+    </a>
+    <a href="credits.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Credits
+    </a>
+    <a href="reports.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </a>
+  </div>
+</nav>
+<style>
+  @media(max-width:768px){
+    #mobileBottomNav { display: block !important; }
+    #main { padding-bottom: 64px; }
+    .mob-nav.active { color: #C8102E !important; }
+  }
+</style>
+
+<script>
+// Auto-add data-label to table cells based on thead for mobile card view
+function autoLabelTables() {
+  document.querySelectorAll('.ak-table').forEach(table => {
+    const headers = [...table.querySelectorAll('thead th')].map(th => th.textContent.trim());
+    table.querySelectorAll('tbody tr').forEach(tr => {
+      [...tr.querySelectorAll('td')].forEach((td, i) => {
+        if (headers[i] && !td.getAttribute('data-label')) {
+          td.setAttribute('data-label', headers[i]);
+        }
+      });
+    });
+  });
+}
+// Run after content loads (observe DOM mutations)
+const tableObserver = new MutationObserver(autoLabelTables);
+tableObserver.observe(document.body, { childList: true, subtree: true });
+autoLabelTables();
+</script>
+
 </body>
 </html>

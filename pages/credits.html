@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AK Agency — Credits</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"DM Sans",sans-serif;background:#0D0D0D;color:#F5F5F5;min-height:100vh;display:flex;}
+    ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:#1A1A1A;} ::-webkit-scrollbar-thumb{background:#C8102E;border-radius:4px;}
+
+    #sidebar{width:240px;min-height:100vh;background:#1A1A1A;border-right:1px solid #2A2A2A;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid #2A2A2A;}
+    .nav-section-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#4A4A4A;padding:20px 20px 8px;font-weight:600;}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;margin:2px 10px;border-radius:8px;color:#6B6B6B;font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+    .nav-item:hover{background:rgba(200,16,46,0.08);color:#F5F5F5;}
+    .nav-item.active{background:rgba(200,16,46,0.15);color:#fff;}
+    .nav-item.active svg{color:#C8102E;}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0;}
+    .nav-badge{margin-left:auto;background:#C8102E;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:99px;}
+    .sidebar-bottom{margin-top:auto;padding:16px;border-top:1px solid #2A2A2A;}
+
+    #main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    #topbar{height:64px;background:#1A1A1A;border-bottom:1px solid #2A2A2A;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C8102E,#9B0B22);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;cursor:pointer;}
+    #content{padding:28px;flex:1;}
+
+    .section-card{background:#202020;border:1px solid #2A2A2A;border-radius:14px;padding:22px;}
+    .stat-mini{background:#202020;border:1px solid #2A2A2A;border-radius:12px;padding:18px;position:relative;overflow:hidden;}
+    .stat-mini::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;}
+    .stat-mini.red::before{background:linear-gradient(90deg,#C8102E,#FF4D6D);}
+    .stat-mini.amber::before{background:linear-gradient(90deg,#F59E0B,#FCD34D);}
+    .stat-mini.green::before{background:linear-gradient(90deg,#10B981,#34D399);}
+    .stat-mini.blue::before{background:linear-gradient(90deg,#3B82F6,#60A5FA);}
+
+    .ak-table{width:100%;border-collapse:collapse;}
+    .ak-table th{text-align:left;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A4A4A;padding:10px 14px;border-bottom:1px solid #2A2A2A;}
+    .ak-table td{padding:13px 14px;font-size:0.85rem;color:#ccc;border-bottom:1px solid #222;}
+    .ak-table tr:last-child td{border-bottom:none;}
+    .ak-table tr:hover td{background:rgba(255,255,255,0.02);color:#fff;}
+
+    .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:600;}
+    .pill-green{background:rgba(16,185,129,0.15);color:#10B981;}
+    .pill-red{background:rgba(200,16,46,0.15);color:#FF4D6D;}
+    .pill-amber{background:rgba(245,158,11,0.15);color:#F59E0B;}
+    .pill-blue{background:rgba(59,130,246,0.15);color:#60A5FA;}
+
+    .btn-primary{background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform 0.15s,box-shadow 0.15s;font-family:"DM Sans",sans-serif;}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,16,46,0.35);}
+    .btn-ghost{background:rgba(255,255,255,0.05);color:#ccc;border:1px solid #2A2A2A;border-radius:8px;padding:10px 16px;font-size:0.85rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .btn-ghost:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    .btn-icon{background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;color:#6B6B6B;}
+    .btn-icon:hover{background:rgba(255,255,255,0.06);color:#fff;}
+    .btn-icon.danger:hover{background:rgba(200,16,46,0.1);color:#FF4D6D;}
+
+    .form-label{display:block;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;}
+    .form-input{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid #2A2A2A;border-radius:8px;padding:10px 14px;color:#F5F5F5;font-size:0.875rem;outline:none;font-family:"DM Sans",sans-serif;transition:border-color 0.2s,box-shadow 0.2s;}
+    .form-input:focus{border-color:#C8102E;box-shadow:0 0 0 3px rgba(200,16,46,0.12);}
+    .form-input::placeholder{color:#3A3A3A;}
+    select.form-input option{background:#1A1A1A;}
+
+    .filter-input{background:rgba(255,255,255,0.04);border:1px solid #2A2A2A;border-radius:8px;padding:9px 14px;color:#F5F5F5;font-size:0.85rem;outline:none;font-family:"DM Sans",sans-serif;transition:border-color 0.2s;}
+    .filter-input:focus{border-color:#C8102E;}
+    .filter-input::placeholder{color:#4A4A4A;}
+    select.filter-input option{background:#1A1A1A;}
+
+    #modalOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:16px;}
+    #modalOverlay.open{display:flex;}
+    .modal{background:#1A1A1A;border:1px solid #2A2A2A;border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:modalIn 0.25s cubic-bezier(0.22,1,0.36,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(16px);}to{opacity:1;transform:scale(1) translateY(0);}}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1A1A;border:1px solid #2A2A2A;color:#F5F5F5;padding:12px 24px;border-radius:8px;font-size:0.85rem;z-index:9999;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),opacity 0.3s;opacity:0;min-width:220px;text-align:center;}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #toast.success{border-color:rgba(16,185,129,0.5);}
+    #toast.err{border-color:rgba(200,16,46,0.5);}
+
+    .tab-bar{display:flex;gap:4px;background:#1A1A1A;border:1px solid #2A2A2A;border-radius:10px;padding:4px;margin-bottom:24px;width:fit-content;}
+    .tab-btn{padding:8px 20px;border-radius:7px;border:none;background:none;color:#6B6B6B;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .tab-btn.active{background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;}
+
+    .credit-bar-bg{background:#2A2A2A;border-radius:99px;height:6px;margin-top:6px;}
+    .credit-bar-fill{height:6px;border-radius:99px;transition:width 0.8s;}
+
+    .fade-in{animation:fadeIn 0.4s ease both;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+    @media(max-width:768px){
+      #sidebar{transform:translateX(-100%);}
+      #sidebar.open{transform:translateX(0);}
+      #sidebarOverlay.open{display:block !important;}
+      #main{margin-left:0;}
+      #content{padding:16px;}
+      #topbar{padding:0 16px;}
+      .stats-grid{grid-template-columns:1fr 1fr !important;}
+      .action-bar{flex-direction:column;align-items:stretch !important;gap:10px !important;}
+      .action-bar .btn-primary,.action-bar .search-wrap{width:100%;}
+      .filter-row{flex-direction:column !important;gap:10px !important;}
+      .filter-row > *{width:100% !important;}
+      .ak-table thead{display:none;}
+      .ak-table tr{display:block;background:#1C1C1C;border:1px solid #2A2A2A;border-radius:10px;margin-bottom:10px;padding:12px;}
+      .ak-table td{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border:none;font-size:0.82rem;}
+      .ak-table td::before{content:attr(data-label);font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A4A4A;margin-right:8px;flex-shrink:0;}
+      .modal{max-width:100% !important;border-radius:16px 16px 0 0;position:fixed;bottom:0;margin:0;}
+      #modalOverlay{align-items:flex-end;}
+      .tab-bar{width:100%;overflow-x:auto;}
+    }
+    @media(max-width:480px){
+      .stats-grid{grid-template-columns:1fr !important;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;"></div>
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="flex items-center gap-3">
+      <div style="width:36px;height:36px;border-radius:8px;background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-family:'Bebas Neue';font-size:1.1rem;color:#C8102E;">AK</span>
+      </div>
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:0.1em;color:#fff;line-height:1;">AK AGENCY</div>
+        <div style="font-size:0.65rem;color:#4A4A4A;">FMCG Distribution</div>
+      </div>
+    </div>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding-bottom:8px;">
+    <div class="nav-section-label">Main</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Dashboard
+    </a>
+    <a href="billing.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Billing
+    </a>
+    <div class="nav-section-label">Management</div>
+    <a href="products.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Products
+    </a>
+    <a href="retailers.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Retailers
+    </a>
+    <a href="stock.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+      Stock
+    </a>
+    <a href="credits.html" class="nav-item active">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Credits
+    </a>
+    <div class="nav-section-label">Analytics</div>
+    <a href="reports.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button onclick="logoutUser()" class="nav-item" style="width:100%;border:none;background:none;text-align:left;">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<div id="main">
+  <header id="topbar">
+    <div class="flex items-center gap-4">
+      <button onclick="openSidebar()" id="menuBtn" style="display:none;padding:8px;border-radius:8px;background:none;border:none;cursor:pointer;">
+        <svg style="width:20px;height:20px;color:#ccc;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h2 style="font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:0.08em;color:#fff;line-height:1;">Credits</h2>
+        <p style="font-size:0.75rem;color:#6B6B6B;">Track outstanding dues & payments</p>
+      </div>
+    </div>
+    <div class="avatar" id="userAvatar">A</div>
+  </header>
+
+  <main id="content">
+
+    <!-- Stat cards -->
+    <div class="stats-grid fade-in" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;">
+      <div class="stat-mini red">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Total Outstanding</div>
+        <div id="statTotal" style="font-size:1.6rem;font-weight:700;color:#fff;line-height:1;">₹0</div>
+        <div style="font-size:0.75rem;color:#FF4D6D;margin-top:4px;" id="statOverdue">0 overdue</div>
+      </div>
+      <div class="stat-mini amber">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Pending Bills</div>
+        <div id="statPending" style="font-size:1.6rem;font-weight:700;color:#fff;line-height:1;">0</div>
+        <div style="font-size:0.75rem;color:#F59E0B;margin-top:4px;">Awaiting payment</div>
+      </div>
+      <div class="stat-mini green">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Collected Today</div>
+        <div id="statToday" style="font-size:1.6rem;font-weight:700;color:#fff;line-height:1;">₹0</div>
+        <div style="font-size:0.75rem;color:#10B981;margin-top:4px;">Cash in hand</div>
+      </div>
+      <div class="stat-mini blue">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Retailers in Credit</div>
+        <div id="statRetailers" style="font-size:1.6rem;font-weight:700;color:#fff;line-height:1;">0</div>
+        <div style="font-size:0.75rem;color:#60A5FA;margin-top:4px;">Have open balance</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('outstanding',this)">Outstanding Bills</button>
+      <button class="tab-btn" onclick="switchTab('record',this)">Record Payment</button>
+      <button class="tab-btn" onclick="switchTab('history',this)">Payment History</button>
+    </div>
+
+    <!-- ── TAB: OUTSTANDING ── -->
+    <div id="tabOutstanding">
+      <!-- Filter bar -->
+      <div class="filter-row" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+        <input id="searchOutstanding" class="filter-input" placeholder="Search retailer…" oninput="renderOutstanding()" style="flex:1;min-width:200px;" />
+        <select id="filterStatus" class="filter-input" onchange="renderOutstanding()" style="width:160px;">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="overdue">Overdue (>30d)</option>
+          <option value="partial">Partial</option>
+        </select>
+        <button class="btn-ghost" onclick="exportCSV()">
+          <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Export
+        </button>
+      </div>
+
+      <div class="section-card" style="padding:0;overflow:hidden;">
+        <div style="overflow-x:auto;">
+          <table class="ak-table">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Retailer</th>
+                <th>Invoice Date</th>
+                <th>Due Amount</th>
+                <th>Paid</th>
+                <th>Balance</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="outstandingBody">
+              <tr><td colspan="9" style="text-align:center;color:#4A4A4A;padding:40px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: RECORD PAYMENT ── -->
+    <div id="tabRecord" style="display:none;">
+      <div style="max-width:600px;">
+        <div class="section-card">
+          <h3 style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+            <svg style="width:16px;height:16px;color:#C8102E;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            Record Payment
+          </h3>
+
+          <div style="margin-bottom:14px;">
+            <label class="form-label">Select Invoice</label>
+            <select id="prInvoice" class="form-input" onchange="onInvoiceSelect()">
+              <option value="">-- Choose outstanding invoice --</option>
+            </select>
+          </div>
+
+          <div id="invoiceInfo" style="display:none;background:rgba(200,16,46,0.06);border:1px solid rgba(200,16,46,0.2);border-radius:10px;padding:14px;margin-bottom:16px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+              <div>
+                <div style="font-size:0.7rem;color:#6B6B6B;margin-bottom:2px;">Retailer</div>
+                <div style="font-size:0.85rem;font-weight:600;color:#fff;" id="piRetailer">—</div>
+              </div>
+              <div>
+                <div style="font-size:0.7rem;color:#6B6B6B;margin-bottom:2px;">Total Bill</div>
+                <div style="font-size:0.85rem;font-weight:600;color:#fff;" id="piTotal">₹0</div>
+              </div>
+              <div>
+                <div style="font-size:0.7rem;color:#6B6B6B;margin-bottom:2px;">Balance Due</div>
+                <div style="font-size:0.85rem;font-weight:700;color:#FF4D6D;" id="piBalance">₹0</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;">
+              <div style="font-size:0.7rem;color:#6B6B6B;margin-bottom:4px;">Payment Progress</div>
+              <div class="credit-bar-bg">
+                <div class="credit-bar-fill" id="piBar" style="width:0%;background:linear-gradient(90deg,#10B981,#34D399);"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div>
+              <label class="form-label">Amount Received (₹)</label>
+              <input id="prAmount" type="number" min="0" class="form-input" placeholder="0.00" oninput="onAmountInput()" />
+            </div>
+            <div>
+              <label class="form-label">Payment Date</label>
+              <input id="prDate" type="date" class="form-input" />
+            </div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <label class="form-label">Payment Mode</label>
+            <select id="prMode" class="form-input">
+              <option value="cash">Cash</option>
+              <option value="upi">UPI / PhonePe / GPay</option>
+              <option value="bank">Bank Transfer / NEFT</option>
+              <option value="cheque">Cheque</option>
+            </select>
+          </div>
+          <div style="margin-bottom:20px;">
+            <label class="form-label">Notes (optional)</label>
+            <input id="prNotes" class="form-input" placeholder="e.g. Partial payment, cheque no. 12345…" />
+          </div>
+
+          <div id="prErr" style="display:none;color:#f87171;font-size:0.82rem;margin-bottom:12px;padding:10px;background:rgba(239,68,68,0.08);border-radius:8px;"></div>
+
+          <button class="btn-primary" onclick="recordPayment()" id="prBtn" style="width:100%;">
+            <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Record Payment
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: HISTORY ── -->
+    <div id="tabHistory" style="display:none;">
+      <div class="filter-row" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
+        <input id="searchHistory" class="filter-input" placeholder="Search retailer or invoice…" oninput="renderHistory()" style="flex:1;min-width:200px;" />
+        <select id="filterMode" class="filter-input" onchange="renderHistory()" style="width:160px;">
+          <option value="">All Modes</option>
+          <option value="cash">Cash</option>
+          <option value="upi">UPI</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="cheque">Cheque</option>
+        </select>
+      </div>
+      <div class="section-card" style="padding:0;overflow:hidden;">
+        <div style="overflow-x:auto;">
+          <table class="ak-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Invoice #</th>
+                <th>Retailer</th>
+                <th>Amount</th>
+                <th>Mode</th>
+                <th>Notes</th>
+                <th>By</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="7" style="text-align:center;color:#4A4A4A;padding:40px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5CGQsAkuWUuMVWDXeRiTjVwCFHX-8hOM",
+    authDomain: "ak-agency-c4047.firebaseapp.com",
+    projectId: "ak-agency-c4047",
+    storageBucket: "ak-agency-c4047.firebasestorage.app",
+    messagingSenderId: "270275192870",
+    appId: "1:270275192870:web:0a3dd66eddc4094eb85ee7"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  let currentUser = null;
+  let allInvoices = [];
+  let allPayments = [];
+
+  auth.onAuthStateChanged(user => {
+    if (!user) { window.location.href = "../index.html"; return; }
+    currentUser = user;
+    document.getElementById("userAvatar").textContent = (user.email||"A")[0].toUpperCase();
+    loadData();
+  });
+
+  function logoutUser() { auth.signOut().then(() => window.location.href = "../index.html"); }
+  function openSidebar()  { document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").style.display = "block"; }
+  function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("sidebarOverlay").style.display = "none"; }
+  if (window.innerWidth <= 768) document.getElementById("menuBtn").style.display = "block";
+  window.addEventListener("resize", () => { document.getElementById("menuBtn").style.display = window.innerWidth<=768?"block":"none"; });
+
+  // Set default date
+  document.getElementById("prDate").value = new Date().toISOString().split("T")[0];
+
+  function showToast(msg, type="err") {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.className = "show " + type;
+    setTimeout(() => t.className = "", 3500);
+  }
+
+  function formatINR(n) { return "₹" + Number(n||0).toLocaleString("en-IN"); }
+
+  async function loadData() {
+    try {
+      // Load pending/partial invoices
+      const invSnap = await db.collection("invoices")
+        .where("status", "in", ["pending", "partial"])
+        .orderBy("createdAt", "desc")
+        .get();
+      allInvoices = invSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Load payment history
+      const paySnap = await db.collection("payments")
+        .orderBy("createdAt", "desc")
+        .limit(200)
+        .get();
+      allPayments = paySnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Stat: today's collections
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const todayPaid = allPayments
+        .filter(p => p.createdAt?.toDate?.() >= today)
+        .reduce((s,p) => s + (p.amount||0), 0);
+
+      // Outstanding stats
+      const totalDue = allInvoices.reduce((s,inv) => s + ((inv.total||0) - (inv.paidAmount||0)), 0);
+      const now = new Date();
+      const overdueCount = allInvoices.filter(inv => {
+        const d = inv.createdAt?.toDate?.() || new Date();
+        return (now - d) / 86400000 > 30;
+      }).length;
+      const retailersWithCredit = new Set(allInvoices.map(inv => inv.retailerId)).size;
+
+      document.getElementById("statTotal").textContent = formatINR(totalDue);
+      document.getElementById("statOverdue").textContent = overdueCount + " overdue";
+      document.getElementById("statPending").textContent = allInvoices.length;
+      document.getElementById("statToday").textContent = formatINR(todayPaid);
+      document.getElementById("statRetailers").textContent = retailersWithCredit;
+
+      // Populate invoice dropdown
+      const sel = document.getElementById("prInvoice");
+      sel.innerHTML = '<option value="">-- Choose outstanding invoice --</option>';
+      allInvoices.forEach(inv => {
+        const balance = (inv.total||0) - (inv.paidAmount||0);
+        const opt = document.createElement("option");
+        opt.value = inv.id;
+        opt.textContent = `#${inv.invoiceNumber||inv.id.slice(-6).toUpperCase()} — ${inv.retailerName||"?"} — ${formatINR(balance)} due`;
+        sel.appendChild(opt);
+      });
+
+      renderOutstanding();
+      renderHistory();
+    } catch(err) {
+      console.error(err);
+      showToast("Error loading data: " + err.message);
+    }
+  }
+
+  function renderOutstanding() {
+    const q = document.getElementById("searchOutstanding").value.toLowerCase();
+    const s = document.getElementById("filterStatus").value;
+    const now = new Date();
+    let filtered = allInvoices.filter(inv => {
+      const days = Math.floor((now - (inv.createdAt?.toDate?.() || now)) / 86400000);
+      const status = days > 30 ? "overdue" : inv.status;
+      const matchQ = !q || (inv.retailerName||"").toLowerCase().includes(q) || (inv.invoiceNumber||"").toLowerCase().includes(q);
+      const matchS = !s || status === s;
+      return matchQ && matchS;
+    });
+
+    const tbody = document.getElementById("outstandingBody");
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#4A4A4A;padding:40px;">No outstanding bills found</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = filtered.map(inv => {
+      const invDate = inv.createdAt?.toDate?.() || new Date();
+      const days = Math.floor((now - invDate) / 86400000);
+      const balance = (inv.total||0) - (inv.paidAmount||0);
+      const status = days > 30 ? "overdue" : inv.status;
+      const pillClass = status === "overdue" ? "pill-red" : status === "partial" ? "pill-blue" : "pill-amber";
+      return `
+        <tr>
+          <td data-label="Invoice #" style="color:#C8102E;font-weight:600;">#${inv.invoiceNumber||inv.id.slice(-6).toUpperCase()}</td>
+          <td data-label="Retailer" style="font-weight:500;color:#fff;">${inv.retailerName||"—"}</td>
+          <td data-label="Date">${invDate.toLocaleDateString("en-IN")}</td>
+          <td data-label="Total">${formatINR(inv.total)}</td>
+          <td data-label="Paid" style="color:#10B981;">${formatINR(inv.paidAmount||0)}</td>
+          <td data-label="Balance" style="font-weight:700;color:#FF4D6D;">${formatINR(balance)}</td>
+          <td data-label="Age"><span style="color:${days>30?'#FF4D6D':days>14?'#F59E0B':'#6B6B6B'}">${days}d</span></td>
+          <td data-label="Status"><span class="pill ${pillClass}">${status}</span></td>
+          <td data-label="Action">
+            <button class="btn-primary" style="padding:6px 12px;font-size:0.78rem;" onclick="quickPay('${inv.id}')">
+              Pay
+            </button>
+          </td>
+        </tr>`;
+    }).join("");
+  }
+
+  function renderHistory() {
+    const q = document.getElementById("searchHistory").value.toLowerCase();
+    const m = document.getElementById("filterMode").value;
+    let filtered = allPayments.filter(p => {
+      const matchQ = !q || (p.retailerName||"").toLowerCase().includes(q) || (p.invoiceNumber||"").toLowerCase().includes(q);
+      const matchM = !m || p.mode === m;
+      return matchQ && matchM;
+    });
+    const tbody = document.getElementById("historyBody");
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#4A4A4A;padding:40px;">No payment history found</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = filtered.map(p => {
+      const d = p.createdAt?.toDate?.() || new Date();
+      const modeColors = {cash:"#10B981",upi:"#60A5FA",bank:"#A78BFA",cheque:"#F59E0B"};
+      return `
+        <tr>
+          <td data-label="Date">${d.toLocaleDateString("en-IN")}</td>
+          <td data-label="Invoice #" style="color:#C8102E;font-weight:600;">#${p.invoiceNumber||"—"}</td>
+          <td data-label="Retailer" style="font-weight:500;color:#fff;">${p.retailerName||"—"}</td>
+          <td data-label="Amount" style="font-weight:700;color:#10B981;">${formatINR(p.amount)}</td>
+          <td data-label="Mode"><span style="color:${modeColors[p.mode]||'#ccc'};font-weight:600;text-transform:uppercase;font-size:0.75rem;">${p.mode||"—"}</span></td>
+          <td data-label="Notes" style="color:#6B6B6B;">${p.notes||"—"}</td>
+          <td data-label="By" style="color:#6B6B6B;font-size:0.78rem;">${(p.recordedBy||"").split("@")[0]||"—"}</td>
+        </tr>`;
+    }).join("");
+  }
+
+  function switchTab(tab, btn) {
+    ["Outstanding","Record","History"].forEach(t => {
+      document.getElementById("tab"+t).style.display = "none";
+    });
+    document.getElementById("tab"+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display = "block";
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+
+  function quickPay(invoiceId) {
+    document.getElementById("prInvoice").value = invoiceId;
+    onInvoiceSelect();
+    switchTab("record", document.querySelectorAll(".tab-btn")[1]);
+  }
+
+  function onInvoiceSelect() {
+    const id = document.getElementById("prInvoice").value;
+    const inv = allInvoices.find(i => i.id === id);
+    const infoEl = document.getElementById("invoiceInfo");
+    if (!inv) { infoEl.style.display = "none"; return; }
+    infoEl.style.display = "block";
+    const balance = (inv.total||0) - (inv.paidAmount||0);
+    const pct = inv.total ? ((inv.paidAmount||0)/inv.total*100).toFixed(0) : 0;
+    document.getElementById("piRetailer").textContent = inv.retailerName||"—";
+    document.getElementById("piTotal").textContent = formatINR(inv.total);
+    document.getElementById("piBalance").textContent = formatINR(balance);
+    document.getElementById("piBar").style.width = pct + "%";
+  }
+
+  function onAmountInput() {}
+
+  async function recordPayment() {
+    const invoiceId = document.getElementById("prInvoice").value;
+    const amount    = parseFloat(document.getElementById("prAmount").value);
+    const date      = document.getElementById("prDate").value;
+    const mode      = document.getElementById("prMode").value;
+    const notes     = document.getElementById("prNotes").value.trim();
+    const errEl     = document.getElementById("prErr");
+
+    if (!invoiceId) { errEl.textContent = "Please select an invoice."; errEl.style.display = "block"; return; }
+    if (!amount || amount <= 0) { errEl.textContent = "Enter a valid payment amount."; errEl.style.display = "block"; return; }
+    errEl.style.display = "none";
+
+    const inv = allInvoices.find(i => i.id === invoiceId);
+    const balance = (inv.total||0) - (inv.paidAmount||0);
+    if (amount > balance + 0.01) { errEl.textContent = `Amount exceeds balance due (${formatINR(balance)}).`; errEl.style.display = "block"; return; }
+
+    const btn = document.getElementById("prBtn");
+    btn.disabled = true; btn.textContent = "Saving…";
+
+    try {
+      const newPaid = (inv.paidAmount||0) + amount;
+      const newStatus = newPaid >= (inv.total||0) - 0.01 ? "paid" : "partial";
+
+      // Save payment record
+      await db.collection("payments").add({
+        invoiceId,
+        invoiceNumber: inv.invoiceNumber || invoiceId.slice(-6).toUpperCase(),
+        retailerId:    inv.retailerId || "",
+        retailerName:  inv.retailerName || "",
+        amount,
+        mode,
+        notes,
+        recordedBy: currentUser.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Update invoice
+      await db.collection("invoices").doc(invoiceId).update({
+        paidAmount: newPaid,
+        status: newStatus,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      showToast("Payment of " + formatINR(amount) + " recorded!", "success");
+      document.getElementById("prAmount").value = "";
+      document.getElementById("prNotes").value = "";
+      document.getElementById("prInvoice").value = "";
+      document.getElementById("invoiceInfo").style.display = "none";
+      await loadData();
+    } catch(err) {
+      showToast("Error: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Record Payment';
+    }
+  }
+
+  function exportCSV() {
+    const rows = [["Invoice #","Retailer","Date","Total","Paid","Balance","Days","Status"]];
+    const now = new Date();
+    allInvoices.forEach(inv => {
+      const days = Math.floor((now-(inv.createdAt?.toDate?.()|| now))/86400000);
+      const balance = (inv.total||0)-(inv.paidAmount||0);
+      rows.push([
+        inv.invoiceNumber||inv.id.slice(-6),
+        inv.retailerName||"",
+        (inv.createdAt?.toDate?.()|| new Date()).toLocaleDateString("en-IN"),
+        inv.total||0, inv.paidAmount||0, balance, days, days>30?"overdue":inv.status
+      ]);
+    });
+    const csv = rows.map(r => r.join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
+    a.download = "credits-" + new Date().toISOString().slice(0,10) + ".csv";
+    a.click();
+  }
+</script>
+
+<!-- Mobile Bottom Nav -->
+<nav id="mobileBottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1A1A1A;border-top:1px solid #2A2A2A;z-index:150;padding:8px 0 env(safe-area-inset-bottom,8px);">
+  <div style="display:flex;justify-content:space-around;align-items:center;">
+    <a href="dashboard.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Home
+    </a>
+    <a href="billing.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Billing
+    </a>
+    <a href="retailers.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Retailers
+    </a>
+    <a href="credits.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav active">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Credits
+    </a>
+    <a href="reports.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </a>
+  </div>
+</nav>
+<style>
+  @media(max-width:768px){
+    #mobileBottomNav { display: block !important; }
+    #main { padding-bottom: 64px; }
+    .mob-nav.active { color: #C8102E !important; }
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AK Agency — Reports</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"DM Sans",sans-serif;background:#0D0D0D;color:#F5F5F5;min-height:100vh;display:flex;}
+    ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:#1A1A1A;} ::-webkit-scrollbar-thumb{background:#C8102E;border-radius:4px;}
+
+    #sidebar{width:240px;min-height:100vh;background:#1A1A1A;border-right:1px solid #2A2A2A;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid #2A2A2A;}
+    .nav-section-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#4A4A4A;padding:20px 20px 8px;font-weight:600;}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;margin:2px 10px;border-radius:8px;color:#6B6B6B;font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+    .nav-item:hover{background:rgba(200,16,46,0.08);color:#F5F5F5;}
+    .nav-item.active{background:rgba(200,16,46,0.15);color:#fff;}
+    .nav-item.active svg{color:#C8102E;}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0;}
+    .sidebar-bottom{margin-top:auto;padding:16px;border-top:1px solid #2A2A2A;}
+
+    #main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    #topbar{height:64px;background:#1A1A1A;border-bottom:1px solid #2A2A2A;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C8102E,#9B0B22);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;}
+    #content{padding:28px;flex:1;}
+
+    .section-card{background:#202020;border:1px solid #2A2A2A;border-radius:14px;padding:22px;}
+    .stat-card{background:#202020;border:1px solid #2A2A2A;border-radius:14px;padding:20px;position:relative;overflow:hidden;}
+    .stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;}
+    .stat-card.red::before{background:linear-gradient(90deg,#C8102E,#FF4D6D);}
+    .stat-card.green::before{background:linear-gradient(90deg,#10B981,#34D399);}
+    .stat-card.blue::before{background:linear-gradient(90deg,#3B82F6,#60A5FA);}
+    .stat-card.amber::before{background:linear-gradient(90deg,#F59E0B,#FCD34D);}
+    .stat-card.purple::before{background:linear-gradient(90deg,#8B5CF6,#A78BFA);}
+
+    .ak-table{width:100%;border-collapse:collapse;}
+    .ak-table th{text-align:left;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A4A4A;padding:10px 14px;border-bottom:1px solid #2A2A2A;}
+    .ak-table td{padding:13px 14px;font-size:0.85rem;color:#ccc;border-bottom:1px solid #222;}
+    .ak-table tr:last-child td{border-bottom:none;}
+    .ak-table tr:hover td{background:rgba(255,255,255,0.02);color:#fff;}
+
+    .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:600;}
+    .pill-green{background:rgba(16,185,129,0.15);color:#10B981;}
+    .pill-red{background:rgba(200,16,46,0.15);color:#FF4D6D;}
+    .pill-amber{background:rgba(245,158,11,0.15);color:#F59E0B;}
+
+    .btn-primary{background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform 0.15s,box-shadow 0.15s;font-family:"DM Sans",sans-serif;}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,16,46,0.35);}
+    .btn-ghost{background:rgba(255,255,255,0.05);color:#ccc;border:1px solid #2A2A2A;border-radius:8px;padding:10px 16px;font-size:0.85rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .btn-ghost:hover{background:rgba(255,255,255,0.08);color:#fff;}
+
+    .tab-bar{display:flex;gap:4px;background:#1A1A1A;border:1px solid #2A2A2A;border-radius:10px;padding:4px;margin-bottom:24px;width:fit-content;}
+    .tab-btn{padding:8px 20px;border-radius:7px;border:none;background:none;color:#6B6B6B;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .tab-btn.active{background:linear-gradient(135deg,#C8102E,#9B0B22);color:#fff;}
+
+    .period-btn{padding:6px 14px;border-radius:6px;border:1px solid #2A2A2A;background:none;color:#6B6B6B;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:"DM Sans",sans-serif;}
+    .period-btn.active{background:rgba(200,16,46,0.15);border-color:rgba(200,16,46,0.4);color:#fff;}
+
+    .fade-in{animation:fadeIn 0.4s ease both;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+    @media(max-width:768px){
+      #sidebar{transform:translateX(-100%);}
+      #sidebar.open{transform:translateX(0);}
+      #sidebarOverlay.open{display:block !important;}
+      #main{margin-left:0;}
+      #content{padding:16px;}
+      #topbar{padding:0 16px;}
+      .stats-grid{grid-template-columns:1fr 1fr !important;}
+      .charts-grid{grid-template-columns:1fr !important;}
+      .tables-grid{grid-template-columns:1fr !important;}
+      .tab-bar{width:100%;overflow-x:auto;}
+      .period-bar{flex-wrap:wrap;}
+      .ak-table thead{display:none;}
+      .ak-table tr{display:block;background:#1C1C1C;border:1px solid #2A2A2A;border-radius:10px;margin-bottom:10px;padding:12px;}
+      .ak-table td{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border:none;font-size:0.82rem;}
+      .ak-table td::before{content:attr(data-label);font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A4A4A;margin-right:8px;flex-shrink:0;}
+    }
+    @media(max-width:480px){
+      .stats-grid{grid-template-columns:1fr !important;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;"></div>
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="flex items-center gap-3">
+      <div style="width:36px;height:36px;border-radius:8px;background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-family:'Bebas Neue';font-size:1.1rem;color:#C8102E;">AK</span>
+      </div>
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:0.1em;color:#fff;line-height:1;">AK AGENCY</div>
+        <div style="font-size:0.65rem;color:#4A4A4A;">FMCG Distribution</div>
+      </div>
+    </div>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding-bottom:8px;">
+    <div class="nav-section-label">Main</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Dashboard
+    </a>
+    <a href="billing.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Billing
+    </a>
+    <div class="nav-section-label">Management</div>
+    <a href="products.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Products
+    </a>
+    <a href="retailers.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Retailers
+    </a>
+    <a href="stock.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+      Stock
+    </a>
+    <a href="credits.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Credits
+    </a>
+    <div class="nav-section-label">Analytics</div>
+    <a href="reports.html" class="nav-item active">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button onclick="logoutUser()" class="nav-item" style="width:100%;border:none;background:none;text-align:left;">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<div id="main">
+  <header id="topbar">
+    <div class="flex items-center gap-4">
+      <button onclick="openSidebar()" id="menuBtn" style="display:none;padding:8px;border-radius:8px;background:none;border:none;cursor:pointer;">
+        <svg style="width:20px;height:20px;color:#ccc;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h2 style="font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:0.08em;color:#fff;line-height:1;">Reports</h2>
+        <p style="font-size:0.75rem;color:#6B6B6B;">Sales analytics & business insights</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="btn-ghost" onclick="exportReport()" style="padding:8px 14px;">
+        <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Export
+      </button>
+      <div class="avatar" id="userAvatar">A</div>
+    </div>
+  </header>
+
+  <main id="content">
+
+    <!-- Period selector -->
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div>
+        <h1 style="font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:0.08em;color:#fff;line-height:1;">Sales Reports</h1>
+        <p style="font-size:0.82rem;color:#6B6B6B;margin-top:4px;" id="reportSubtitle">Loading data…</p>
+      </div>
+      <div class="period-bar flex gap-2">
+        <button class="period-btn" onclick="setPeriod(7,this)">7 Days</button>
+        <button class="period-btn active" onclick="setPeriod(30,this)">30 Days</button>
+        <button class="period-btn" onclick="setPeriod(90,this)">3 Months</button>
+        <button class="period-btn" onclick="setPeriod(365,this)">1 Year</button>
+      </div>
+    </div>
+
+    <!-- KPI Stat Cards -->
+    <div class="stats-grid fade-in" style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;">
+      <div class="stat-card red">
+        <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Total Revenue</div>
+        <div id="kpiRevenue" style="font-size:1.5rem;font-weight:700;color:#fff;line-height:1.1;">₹0</div>
+        <div id="kpiRevenueChg" style="font-size:0.73rem;color:#10B981;margin-top:4px;">—</div>
+      </div>
+      <div class="stat-card green">
+        <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Bills Raised</div>
+        <div id="kpiBills" style="font-size:1.5rem;font-weight:700;color:#fff;line-height:1.1;">0</div>
+        <div id="kpiAvgBill" style="font-size:0.73rem;color:#6B6B6B;margin-top:4px;">Avg: ₹0</div>
+      </div>
+      <div class="stat-card blue">
+        <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Collected</div>
+        <div id="kpiCollected" style="font-size:1.5rem;font-weight:700;color:#fff;line-height:1.1;">₹0</div>
+        <div id="kpiCollRate" style="font-size:0.73rem;color:#6B6B6B;margin-top:4px;">0% rate</div>
+      </div>
+      <div class="stat-card amber">
+        <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Outstanding</div>
+        <div id="kpiOutstanding" style="font-size:1.5rem;font-weight:700;color:#FF4D6D;line-height:1.1;">₹0</div>
+        <div id="kpiPending" style="font-size:0.73rem;color:#F59E0B;margin-top:4px;">0 invoices</div>
+      </div>
+      <div class="stat-card purple">
+        <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B;margin-bottom:8px;">Active Retailers</div>
+        <div id="kpiRetailers" style="font-size:1.5rem;font-weight:700;color:#fff;line-height:1.1;">0</div>
+        <div id="kpiNewRetailers" style="font-size:0.73rem;color:#A78BFA;margin-top:4px;">ordered in period</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-grid" style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;">
+      <div class="section-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div style="font-size:0.95rem;font-weight:600;color:#fff;">Revenue Trend</div>
+          <span id="chartPeriodLabel" style="font-size:0.78rem;color:#6B6B6B;"></span>
+        </div>
+        <canvas id="revenueChart" height="100"></canvas>
+      </div>
+      <div class="section-card">
+        <div style="font-size:0.95rem;font-weight:600;color:#fff;margin-bottom:18px;">Bill Status Breakdown</div>
+        <canvas id="statusChart" height="180"></canvas>
+        <div id="statusLegend" style="margin-top:16px;display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+
+    <!-- Bottom tables row -->
+    <div class="tables-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <!-- Top Retailers -->
+      <div class="section-card">
+        <div style="font-size:0.95rem;font-weight:600;color:#fff;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+          Top Retailers
+          <span style="font-size:0.78rem;color:#6B6B6B;" id="topRetCount"></span>
+        </div>
+        <table class="ak-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Retailer</th><th>Bills</th><th>Revenue</th><th>Share</th>
+            </tr>
+          </thead>
+          <tbody id="topRetailersBody">
+            <tr><td colspan="5" style="text-align:center;color:#4A4A4A;padding:24px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Products -->
+      <div class="section-card">
+        <div style="font-size:0.95rem;font-weight:600;color:#fff;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+          Top Products
+          <span style="font-size:0.78rem;color:#6B6B6B;" id="topProdCount"></span>
+        </div>
+        <table class="ak-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Product</th><th>Qty</th><th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody id="topProductsBody">
+            <tr><td colspan="4" style="text-align:center;color:#4A4A4A;padding:24px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5CGQsAkuWUuMVWDXeRiTjVwCFHX-8hOM",
+    authDomain: "ak-agency-c4047.firebaseapp.com",
+    projectId: "ak-agency-c4047",
+    storageBucket: "ak-agency-c4047.firebasestorage.app",
+    messagingSenderId: "270275192870",
+    appId: "1:270275192870:web:0a3dd66eddc4094eb85ee7"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  let periodDays = 30;
+  let allInvoices = [];
+  let revenueChart, statusChart;
+
+  auth.onAuthStateChanged(user => {
+    if (!user) { window.location.href = "../index.html"; return; }
+    document.getElementById("userAvatar").textContent = (user.email||"A")[0].toUpperCase();
+    loadReports();
+  });
+
+  function logoutUser() { auth.signOut().then(() => window.location.href = "../index.html"); }
+  function openSidebar()  { document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").style.display = "block"; }
+  function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("sidebarOverlay").style.display = "none"; }
+  if (window.innerWidth <= 768) document.getElementById("menuBtn").style.display = "block";
+  window.addEventListener("resize", () => { document.getElementById("menuBtn").style.display = window.innerWidth<=768?"block":"none"; });
+
+  function setPeriod(days, btn) {
+    periodDays = days;
+    document.querySelectorAll(".period-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    computeAndRender();
+  }
+
+  function formatINR(n) { return "₹" + Number(n||0).toLocaleString("en-IN"); }
+
+  async function loadReports() {
+    try {
+      const snap = await db.collection("invoices").orderBy("createdAt","desc").limit(500).get();
+      allInvoices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      computeAndRender();
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  function computeAndRender() {
+    const now = new Date();
+    const since = new Date(now - periodDays * 86400000);
+    const prevSince = new Date(since - periodDays * 86400000);
+
+    const periodInv = allInvoices.filter(inv => (inv.createdAt?.toDate?.() || new Date(0)) >= since);
+    const prevInv   = allInvoices.filter(inv => {
+      const d = inv.createdAt?.toDate?.() || new Date(0);
+      return d >= prevSince && d < since;
+    });
+
+    // KPIs
+    const revenue    = periodInv.reduce((s,i) => s + (i.total||0), 0);
+    const prevRev    = prevInv.reduce((s,i) => s + (i.total||0), 0);
+    const collected  = periodInv.reduce((s,i) => s + (i.paidAmount||0), 0);
+    const outstanding = periodInv.filter(i => i.status !== "paid").reduce((s,i) => s + ((i.total||0)-(i.paidAmount||0)), 0);
+    const pendingCount = periodInv.filter(i => i.status !== "paid").length;
+    const retailers  = new Set(periodInv.map(i => i.retailerId||i.retailerName)).size;
+    const collRate   = revenue ? Math.round(collected/revenue*100) : 0;
+
+    // Revenue change
+    const revChg = prevRev ? Math.round((revenue-prevRev)/prevRev*100) : null;
+
+    document.getElementById("kpiRevenue").textContent = formatINR(revenue);
+    document.getElementById("kpiRevenueChg").textContent = revChg !== null ? (revChg >= 0 ? "+" : "") + revChg + "% vs prev period" : "First period";
+    document.getElementById("kpiRevenueChg").style.color = revChg >= 0 ? "#10B981" : "#FF4D6D";
+    document.getElementById("kpiBills").textContent = periodInv.length;
+    document.getElementById("kpiAvgBill").textContent = "Avg: " + formatINR(periodInv.length ? Math.round(revenue/periodInv.length) : 0);
+    document.getElementById("kpiCollected").textContent = formatINR(collected);
+    document.getElementById("kpiCollRate").textContent = collRate + "% collection rate";
+    document.getElementById("kpiOutstanding").textContent = formatINR(outstanding);
+    document.getElementById("kpiPending").textContent = pendingCount + " invoices";
+    document.getElementById("kpiRetailers").textContent = retailers;
+
+    const subLabel = periodDays===7?"last 7 days":periodDays===30?"last 30 days":periodDays===90?"last 3 months":"last 1 year";
+    document.getElementById("reportSubtitle").textContent = `Showing data for the ${subLabel}`;
+
+    // Revenue trend chart
+    renderRevenueChart(periodInv, since, now);
+
+    // Status chart
+    const paid = periodInv.filter(i => i.status==="paid").length;
+    const partial = periodInv.filter(i => i.status==="partial").length;
+    const pending = periodInv.filter(i => i.status==="pending").length;
+    renderStatusChart(paid, partial, pending);
+
+    // Top retailers
+    const retailerMap = {};
+    periodInv.forEach(inv => {
+      const k = inv.retailerName || "Unknown";
+      if (!retailerMap[k]) retailerMap[k] = { bills: 0, revenue: 0 };
+      retailerMap[k].bills++;
+      retailerMap[k].revenue += (inv.total||0);
+    });
+    const topRet = Object.entries(retailerMap).sort((a,b) => b[1].revenue - a[1].revenue).slice(0,10);
+    document.getElementById("topRetCount").textContent = topRet.length + " retailers";
+    const tbody = document.getElementById("topRetailersBody");
+    if (!topRet.length) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#4A4A4A;padding:24px;">No data for this period</td></tr>`;
+    } else {
+      tbody.innerHTML = topRet.map(([name, data], i) => `
+        <tr>
+          <td data-label="#" style="color:#6B6B6B;font-weight:700;width:32px;">${i+1}</td>
+          <td data-label="Retailer" style="font-weight:500;color:#fff;">${name}</td>
+          <td data-label="Bills">${data.bills}</td>
+          <td data-label="Revenue" style="font-weight:600;color:#10B981;">${formatINR(data.revenue)}</td>
+          <td data-label="Share" style="color:#6B6B6B;">${revenue ? Math.round(data.revenue/revenue*100) : 0}%</td>
+        </tr>`).join("");
+    }
+
+    // Top products
+    const productMap = {};
+    periodInv.forEach(inv => {
+      (inv.items||[]).forEach(item => {
+        const k = item.name || item.productName || "Unknown";
+        if (!productMap[k]) productMap[k] = { qty: 0, revenue: 0 };
+        productMap[k].qty += (item.qty||item.quantity||0);
+        productMap[k].revenue += (item.total||item.amount||0);
+      });
+    });
+    const topProd = Object.entries(productMap).sort((a,b) => b[1].revenue - a[1].revenue).slice(0,10);
+    document.getElementById("topProdCount").textContent = topProd.length + " products";
+    const pbody = document.getElementById("topProductsBody");
+    if (!topProd.length) {
+      pbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#4A4A4A;padding:24px;">No product data for this period</td></tr>`;
+    } else {
+      pbody.innerHTML = topProd.map(([name, data], i) => `
+        <tr>
+          <td data-label="#" style="color:#6B6B6B;font-weight:700;width:32px;">${i+1}</td>
+          <td data-label="Product" style="font-weight:500;color:#fff;">${name}</td>
+          <td data-label="Qty">${data.qty.toLocaleString("en-IN")}</td>
+          <td data-label="Revenue" style="font-weight:600;color:#10B981;">${formatINR(data.revenue)}</td>
+        </tr>`).join("");
+    }
+  }
+
+  function renderRevenueChart(invoices, since, now) {
+    // Build daily/weekly buckets
+    const buckets = [];
+    const labels = [];
+    const numBuckets = periodDays <= 30 ? periodDays : periodDays <= 90 ? Math.ceil(periodDays/7) : 12;
+    const bucketSize = (now - since) / numBuckets;
+
+    for (let i = 0; i < numBuckets; i++) {
+      const bucketStart = new Date(since.getTime() + i * bucketSize);
+      const bucketEnd = new Date(since.getTime() + (i+1) * bucketSize);
+      const total = invoices
+        .filter(inv => {
+          const d = inv.createdAt?.toDate?.() || new Date(0);
+          return d >= bucketStart && d < bucketEnd;
+        })
+        .reduce((s,inv) => s + (inv.total||0), 0);
+      buckets.push(total);
+      if (periodDays <= 30) {
+        labels.push(bucketStart.toLocaleDateString("en-IN",{day:"numeric",month:"short"}));
+      } else if (periodDays <= 90) {
+        labels.push("Wk " + (i+1));
+      } else {
+        labels.push(bucketStart.toLocaleDateString("en-IN",{month:"short"}));
+      }
+    }
+
+    document.getElementById("chartPeriodLabel").textContent = labels[0] + " – " + labels[labels.length-1];
+
+    const ctx = document.getElementById("revenueChart").getContext("2d");
+    if (revenueChart) revenueChart.destroy();
+    revenueChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label: "Revenue (₹)",
+          data: buckets,
+          borderColor: "#C8102E",
+          backgroundColor: "rgba(200,16,46,0.08)",
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: "#C8102E",
+          pointRadius: buckets.length > 15 ? 2 : 4,
+          pointHoverRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#1A1A1A", borderColor: "#2A2A2A", borderWidth: 1,
+            titleColor: "#fff", bodyColor: "#ccc",
+            callbacks: { label: ctx => " ₹" + ctx.parsed.y.toLocaleString("en-IN") }
+          }
+        },
+        scales: {
+          x: { grid: { color: "#222" }, ticks: { color: "#6B6B6B", font: { size: 11 }, maxTicksLimit: 10 } },
+          y: { grid: { color: "#222" }, ticks: { color: "#6B6B6B", font: { size: 11 }, callback: v => "₹" + (v>=1000?(v/1000)+"k":v) } }
+        }
+      }
+    });
+  }
+
+  function renderStatusChart(paid, partial, pending) {
+    const ctx = document.getElementById("statusChart").getContext("2d");
+    if (statusChart) statusChart.destroy();
+    const total = paid + partial + pending || 1;
+    statusChart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Paid", "Partial", "Pending"],
+        datasets: [{
+          data: [paid, partial, pending],
+          backgroundColor: ["rgba(16,185,129,0.8)", "rgba(59,130,246,0.8)", "rgba(245,158,11,0.8)"],
+          borderColor: ["#10B981","#3B82F6","#F59E0B"],
+          borderWidth: 2,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: "#1A1A1A", borderColor: "#2A2A2A", borderWidth:1, titleColor:"#fff", bodyColor:"#ccc" } },
+        cutout: "65%"
+      }
+    });
+    document.getElementById("statusLegend").innerHTML = [
+      { label:"Paid", val:paid, pct:Math.round(paid/total*100), color:"#10B981" },
+      { label:"Partial", val:partial, pct:Math.round(partial/total*100), color:"#60A5FA" },
+      { label:"Pending", val:pending, pct:Math.round(pending/total*100), color:"#F59E0B" },
+    ].map(({ label, val, pct, color }) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:${color};"></div>
+          <span style="font-size:0.82rem;color:#ccc;">${label}</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span style="font-size:0.82rem;color:#6B6B6B;">${val} bills</span>
+          <span style="font-size:0.82rem;font-weight:600;color:#fff;">${pct}%</span>
+        </div>
+      </div>`).join("");
+  }
+
+  function exportReport() {
+    const rows = [["Invoice #","Retailer","Date","Total","Paid","Status"]];
+    const since = new Date(Date.now() - periodDays * 86400000);
+    allInvoices
+      .filter(inv => (inv.createdAt?.toDate?.() || new Date(0)) >= since)
+      .forEach(inv => {
+        rows.push([
+          inv.invoiceNumber || inv.id.slice(-6),
+          inv.retailerName || "",
+          (inv.createdAt?.toDate?.() || new Date()).toLocaleDateString("en-IN"),
+          inv.total||0, inv.paidAmount||0, inv.status||""
+        ]);
+      });
+    const csv = rows.map(r => r.join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+    a.download = `report-${periodDays}d-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  }
+</script>
+
+<!-- Mobile Bottom Nav -->
+<nav id="mobileBottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1A1A1A;border-top:1px solid #2A2A2A;z-index:150;padding:8px 0 env(safe-area-inset-bottom,8px);">
+  <div style="display:flex;justify-content:space-around;align-items:center;">
+    <a href="dashboard.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Home
+    </a>
+    <a href="billing.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Billing
+    </a>
+    <a href="retailers.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Retailers
+    </a>
+    <a href="credits.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav ">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Credits
+    </a>
+    <a href="reports.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#6B6B6B;font-size:0.62rem;font-weight:600;padding:4px 8px;border-radius:8px;transition:color 0.2s;" class="mob-nav active">
+      <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </a>
+  </div>
+</nav>
+<style>
+  @media(max-width:768px){
+    #mobileBottomNav { display: block !important; }
+    #main { padding-bottom: 64px; }
+    .mob-nav.active { color: #C8102E !important; }
+  }
+</style>
+</body>
+</html>
